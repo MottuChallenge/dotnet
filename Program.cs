@@ -24,11 +24,9 @@ namespace MottuGrid_Dotnet
                     Description = builder.Configuration["Swagger:Description"] + DateTime.Now.Year,
                     Contact = new OpenApiContact()
                     {
-                        Email = "Swagger:Email",
-                        Name = "Swagger:Name"
-                    },
-              
-
+                        Email = builder.Configuration["Swagger:Email"],
+                        Name = builder.Configuration["Swagger:Name"]
+                    }
                 });
             });
 
