@@ -1,4 +1,8 @@
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using MottuGrid_Dotnet.Infrastructure.Context;
+
 namespace MottuGrid_Dotnet
 {
     public class Program
@@ -12,7 +16,27 @@ namespace MottuGrid_Dotnet
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(swagger =>
+            {
+                swagger.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = builder.Configuration["Swagger:Title"],
+                    Description = builder.Configuration["Swagger:Description"] + DateTime.Now.Year,
+                    Contact = new OpenApiContact()
+                    {
+                        Email = "Swagger:Email",
+                        Name = "Swagger:Name"
+                    },
+              
+
+                });
+            });
+
+            builder.Services.AddDbContext<MottuGridContext>(options =>
+            {
+                options.UseOracle(builder.Configuration.GetConnectionString("Oracle"));
+            });
+
 
             var app = builder.Build();
 
