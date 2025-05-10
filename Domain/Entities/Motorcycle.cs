@@ -12,6 +12,7 @@ namespace MottuGrid_Dotnet.Domain.Entities
         public EngineType EngineType { get; private set; }
         public string Plate { get; private set; }
         public DateTime LastRevisionDate { get; private set; }
+        public ICollection<Log> Logs { get; private set; } = new List<Log>();
 
         public Motorcycle(string model, string engineType, string plate, DateTime lastRevisionDate)
         {
