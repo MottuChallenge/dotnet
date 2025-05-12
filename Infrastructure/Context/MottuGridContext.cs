@@ -10,8 +10,8 @@ namespace MottuGrid_Dotnet.Infrastructure.Context
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Log> Log { get; set; }
-        public DbSet<Section> sections { get; set; }
-        public DbSet<Yard> yards { get; set; }
+        public DbSet<Section> Sections { get; set; }
+        public DbSet<Yard> Yards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
