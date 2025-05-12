@@ -15,6 +15,7 @@ namespace MottuGrid_Dotnet.Infrastructure.Mappings
                 .HasMaxLength(50);
             builder.Property(m => m.EngineType)
                 .IsRequired()
+                .HasConversion<string>()
                 .HasMaxLength(50);
             builder.Property(m => m.Plate)
                 .IsRequired()
