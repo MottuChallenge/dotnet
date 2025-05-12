@@ -13,8 +13,10 @@ namespace MottuGrid_Dotnet.Domain.Entities
         public string Plate { get; private set; }
         public DateTime LastRevisionDate { get; private set; }
         public ICollection<Log> Logs { get; private set; } = new List<Log>();
+        public Guid SectionId { get; private set; }
+        public Section Section { get; private set; }
 
-        public Motorcycle(string model, string engineType, string plate, DateTime lastRevisionDate)
+        public Motorcycle(string model, string engineType, string plate, DateTime lastRevisionDate, Guid sectionId)
         {
             ValidatePlate(plate);
             ValidateEngineType(engineType);
@@ -24,8 +26,7 @@ namespace MottuGrid_Dotnet.Domain.Entities
             this.EngineType = Enum.Parse<EngineType>(engineType.ToUpper());
             this.Plate = plate;
             this.LastRevisionDate = lastRevisionDate;
-
-
+            this.SectionId = sectionId;
         }
 
         private void ValidatePlate(string plate)
