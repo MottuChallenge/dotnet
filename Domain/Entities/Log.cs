@@ -17,6 +17,8 @@
             this.MotorcycleId = motorcycleId;
         }
 
+        public Log() { }
+
         private void ValidateMessage(string message)
         {
             if (string.IsNullOrEmpty(message))

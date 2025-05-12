@@ -18,6 +18,8 @@
             this.YardId = yardId;
         }
 
+        public Section() { }
+
         private void ValidateColor(string color)
         {
             if (string.IsNullOrEmpty(color))

@@ -22,6 +22,9 @@
             this.Phone = phone;
             this.Email = email;
         }
+
+        public Branch() { }
+
         private void ValidateCNPJ(string cnpj)
         {
             if (string.IsNullOrEmpty(cnpj))

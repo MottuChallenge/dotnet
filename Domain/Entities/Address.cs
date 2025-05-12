@@ -27,6 +27,8 @@
             this.Country = country;
         }
 
+        public Address() { }
+
         private void ValidateNumber(string number)
         {
             if (string.IsNullOrEmpty(number))

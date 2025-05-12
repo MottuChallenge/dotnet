@@ -29,6 +29,8 @@ namespace MottuGrid_Dotnet.Domain.Entities
             this.SectionId = sectionId;
         }
 
+        public Motorcycle() { }
+
         private void ValidatePlate(string plate)
         {
             if (string.IsNullOrEmpty(plate))

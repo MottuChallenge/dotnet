@@ -21,6 +21,8 @@
             this.BranchId = branchId;
         }
 
+        public Yard() { }
+
         private void ValidateName(string name)
         {
             if (string.IsNullOrEmpty(name))
