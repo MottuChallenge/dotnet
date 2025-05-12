@@ -20,7 +20,6 @@
   <ItemGroup>
     <Folder Include="Domain\DTO\Response\" />
     <Folder Include="Domain\DTO\Request\" />
-    <Folder Include="Infrastructure\Mappings\" />
     <Folder Include="Infrastructure\Persistence\Repositories\" />
   </ItemGroup>
 
