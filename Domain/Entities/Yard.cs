@@ -5,7 +5,7 @@
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public Double Area { get; private set; }
-        public Guid addressId { get; private set; }
+        public Guid AddressId { get; private set; }
         public Address Address { get; private set; }
         public Guid BranchId { get; private set; }
         public Branch Branch { get; private set; }
@@ -17,7 +17,7 @@
             this.Id = Guid.NewGuid();
             this.Name = name;
             this.Area = area;
-            this.addressId = addressId;
+            this.AddressId = addressId;
             this.BranchId = branchId;
         }
 

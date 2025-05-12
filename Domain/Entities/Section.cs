@@ -7,7 +7,7 @@
         public Double Area { get; private set; }
         public Guid YardId { get; private set; }
         public Yard Yard { get; private set; }
-        public ICollection<Motorcycle> SectionItems { get; private set; } = new List<Motorcycle>();
+        public ICollection<Motorcycle> Motorcycles { get; private set; } = new List<Motorcycle>();
         public Section(string color, double area, Guid yardId)
         {
             ValidateColor(color);
