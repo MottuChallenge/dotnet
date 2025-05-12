@@ -10,6 +10,8 @@
         public string State { get; private set; }
         public string ZipCode { get; private set; }
         public string Country { get; private set; }
+        public Yard? Yard { get; private set; }
+        public Branch? Branch { get; private set; }
 
         public Address(string street, string number, string neighborhood, string city, string state, string zipCode, string country)
         {
