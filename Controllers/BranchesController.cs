@@ -64,7 +64,7 @@ namespace MottuGrid_Dotnet.Controllers
             
             var addressResponse = new AddressResponse(address.Id, address.Street);
 
-            return CreatedAtAction("GetBranch", new { id = branch.Id }, new BranchResponse(branch.Id, addressResponse));
+            return CreatedAtAction("GetBranch", new { id = branch.Id }, new BranchResponse(branch.Id, branch.Name, branch.CNPJ, branch.Phone, branch.Email, addressResponse, []));
         }
 
         // PUT: api/Branches/5
