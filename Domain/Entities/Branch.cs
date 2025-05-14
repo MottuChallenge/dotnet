@@ -1,4 +1,8 @@
-﻿namespace MottuGrid_Dotnet.Domain.Entities
+﻿using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using MottuGrid_Dotnet.Domain.DTO.Request;
+using System.Xml.Linq;
+
+namespace MottuGrid_Dotnet.Domain.Entities
 {
     public class Branch
     {
@@ -63,5 +67,20 @@
                 throw new ArgumentException("Email must contain .");
             }
         }
-    }
+
+        public void UpdateBranch(BranchRequest branchRequest)
+        {
+            if (branchRequest == null)
+            {
+                throw new ArgumentNullException("Invalid must be not null");
+            }
+            ValidateCNPJ(branchRequest.CNPJ);
+            ValidateEmail(branchRequest.Email);
+            ValidatePhone(branchRequest.Phone);
+            this.Name = branchRequest.Name;
+            this.CNPJ = branchRequest.CNPJ;
+            this.Phone = branchRequest.Phone;
+            this.Email = branchRequest.Email;
+
+        }
 }

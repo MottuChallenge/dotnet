@@ -1,4 +1,10 @@
-﻿namespace MottuGrid_Dotnet.Domain.Entities
+﻿using Mono.TextTemplating;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Diagnostics.Metrics;
+using System.IO;
+using System.Reflection.Emit;
+
+namespace MottuGrid_Dotnet.Domain.Entities
 {
     public class Address
     {
@@ -47,6 +53,17 @@
             {
                 throw new ArgumentException("Zip code must have 8 characters");
             }
+        }
+
+        public void UpdateAddress(Address address)
+        {
+            this.Street = address.Street;
+            this.Number = address.Number;
+            this.Neighborhood = address.Neighborhood;
+            this.City = address.City;
+            this.State = address.State;
+            this.ZipCode = address.ZipCode;
+            this.Country = address.Country;
         }
 
     }
