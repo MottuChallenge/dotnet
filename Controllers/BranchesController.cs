@@ -26,16 +26,42 @@ namespace MottuGrid_Dotnet.Controllers
         // GET: api/Branches
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IEnumerable<Branch>> GetBranches()
+        public async Task<IEnumerable<BranchResponse>> GetBranches()
         {
-            return await _branchRepository.GetAllAsync();
+            var branches = await _branchRepository.GetAllAsync();
+
+            var branchResponses = new List<BranchResponse>();
+
+            foreach (var branch in branches)
+            {
+                var address = await _addressRepository.GetByIdAsync(branch.AddressId);
+
+                branch.Address = address;
+
+                var addressResponse = new AddressResponse(address.Id, address.Street, address.Neighborhood, address.City, address.State, address.ZipCode, address.Country);
+
+                var branchResponse = new BranchResponse
+                (
+                    branch.Id,
+                    branch.Name,
+                    branch.CNPJ,
+                    branch.Phone,
+                    branch.Email,
+                    addressResponse,
+                    []
+                );
+
+                branchResponses.Add(branchResponse);
+            }
+
+            return branchResponses;
         }
 
         // GET: api/Branches/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Branch>> GetBranch(Guid id)
+        public async Task<ActionResult<BranchResponse>> GetBranch(Guid id)
         {
             var branch = await _branchRepository.GetByIdAsync(id);
 
@@ -44,14 +70,28 @@ namespace MottuGrid_Dotnet.Controllers
                 return NotFound();
             }
 
-            return branch;
+            var address = await _addressRepository.GetByIdAsync(branch.AddressId);
+
+            branch.Address = address;
+
+            var addressResponse = new AddressResponse(address.Id, address.Street, address.Neighborhood, address.City, address.State, address.ZipCode, address.Country);
+
+            return new BranchResponse(
+                    branch.Id,
+                    branch.Name,
+                    branch.CNPJ,
+                    branch.Phone,
+                    branch.Email,
+                    addressResponse,
+                    []
+            );
         }
 
         // POST: api/Branches
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Branch>> PostBranch(BranchRequest branchRequest)
+        public async Task<ActionResult<BranchResponse>> PostBranch(BranchRequest branchRequest)
         {
             var address = await _cepService.GetAddressByCep(branchRequest.Cep, branchRequest.Number);
             if(address == null)
@@ -62,7 +102,7 @@ namespace MottuGrid_Dotnet.Controllers
             await _addressRepository.AddAsync(address);
             await _branchRepository.AddAsync(branch);
             
-            var addressResponse = new AddressResponse(address.Id, address.Street);
+            var addressResponse = new AddressResponse(address.Id, address.Street, address.Neighborhood, address.City, address.State, address.ZipCode, address.Country);
 
             return CreatedAtAction("GetBranch", new { id = branch.Id }, new BranchResponse(branch.Id, branch.Name, branch.CNPJ, branch.Phone, branch.Email, addressResponse, []));
         }
