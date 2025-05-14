@@ -26,11 +26,6 @@ namespace MottuGrid_Dotnet.Infrastructure.Persistence.Repositories
             _dbSet.Remove(entity);
         }
 
-        public void DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
