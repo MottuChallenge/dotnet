@@ -8,7 +8,7 @@
         public string Phone { get; private set; }
         public string Email { get; private set; }
         public Guid AddressId { get; private set; }
-        public Address Address { get; private set; }
+        public Address Address { get; set; }
         public ICollection<Yard> Yards { get; private set; } = new List<Yard>();
         public Branch(string name, string cnpj, Guid addressId, string phone, string email)
         {
