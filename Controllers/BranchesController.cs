@@ -71,6 +71,10 @@ namespace MottuGrid_Dotnet.Controllers
             }
 
             var address = await _addressRepository.GetByIdAsync(branch.AddressId);
+            if (address == null)
+            {
+                return BadRequest();
+            }
 
             branch.Address = address;
 
@@ -112,13 +116,23 @@ namespace MottuGrid_Dotnet.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutBranch(Guid id, Branch branch)
+        public async Task<IActionResult> PutBranch(Guid id, BranchRequest branchRequest)
         {
-            if (id != branch.Id)
+            var branch = await _branchRepository.GetByIdAsync(id);
+            if(branch == null) 
+            {
+                return BadRequest(); 
+            }
+            
+            var newAddress = await _cepService.GetAddressByCep(branchRequest.Cep, branchRequest.Number);
+            var address = await _addressRepository.GetByIdAsync(branch.AddressId);
+            if (address == null)
             {
                 return BadRequest();
             }
-
+            address.UpdateAddress(newAddress);
+            _addressRepository.UpdateAsync(address);
+            branch.UpdateBranch(branchRequest);
             _branchRepository.UpdateAsync(branch);
 
             return NoContent();
