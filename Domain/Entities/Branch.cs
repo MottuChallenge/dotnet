@@ -83,4 +83,5 @@ namespace MottuGrid_Dotnet.Domain.Entities
             this.Email = branchRequest.Email;
 
         }
+    }
 }
