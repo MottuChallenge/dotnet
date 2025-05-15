@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using MottuGrid_Dotnet.Domain.DTO.Request;
 using MottuGrid_Dotnet.Domain.Enums;
 using MottuGrid_Dotnet.Domain.Exceptions;
 
@@ -72,6 +73,18 @@ namespace MottuGrid_Dotnet.Domain.Entities
             {
                 throw new ArgumentException("Last revision date must be in the past");
             }
+        }
+
+        public void Update(MotorcycleRequest request)
+        {
+            ValidatePlate(request.Plate);
+            ValidateEngineType(request.EngineType);
+            ValidateLastRevisionDate(request.LastRevisionDate);
+            Model = request.Model;
+            EngineType = Enum.Parse<EngineType>(request.EngineType.ToUpper()); ;
+            Plate = request.Plate;
+            LastRevisionDate = request.LastRevisionDate;
+            SectionId = request.SectionId;
         }
     }
 }
