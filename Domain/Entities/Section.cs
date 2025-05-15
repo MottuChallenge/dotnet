@@ -1,4 +1,6 @@
-﻿namespace MottuGrid_Dotnet.Domain.Entities
+﻿using MottuGrid_Dotnet.Domain.DTO.Request;
+
+namespace MottuGrid_Dotnet.Domain.Entities
 {
     public class Section
     {
@@ -38,6 +40,12 @@
             {
                 throw new ArgumentException("Area must be greater than 0");
             }
+        }
+        public void Update(SectionRequest request)
+        {
+            Color = request.Color;
+            Area = request.Area;
+            YardId = request.YardId;
         }
     }
 }
