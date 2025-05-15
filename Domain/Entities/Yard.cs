@@ -1,4 +1,6 @@
-﻿namespace MottuGrid_Dotnet.Domain.Entities
+﻿using MottuGrid_Dotnet.Domain.DTO.Request;
+
+namespace MottuGrid_Dotnet.Domain.Entities
 {
     public class Yard
     {
@@ -6,7 +8,7 @@
         public string Name { get; private set; }
         public Double Area { get; private set; }
         public Guid AddressId { get; private set; }
-        public Address Address { get; private set; }
+        public Address Address { get; set; }
         public Guid BranchId { get; private set; }
         public Branch Branch { get; private set; }
 
@@ -37,6 +39,15 @@
             {
                 throw new ArgumentException("Area must be greater than 0");
             }
+        }
+
+        public void UpdateYard(YardRequest yardRequest)
+        {
+            ValidateArea(yardRequest.Area);
+            ValidateName(yardRequest.Name);
+            this.Name = yardRequest.Name;
+            this.Area = yardRequest.Area;
+            this.BranchId = yardRequest.BranchId;
         }
     }
 }
