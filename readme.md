@@ -14,7 +14,7 @@ Este documento apresenta a proposta do grupo para o projeto de CP2, baseado no d
 
 ## 📘 TÍTULO DO PROJETO
 
-Sistema de Mapeamento Inteligente de Motos no Pátio – Filial São Paulo
+MOTTU GRID
 
 ---
 
@@ -62,4 +62,4 @@ Essa solução trará mais agilidade, precisão e controle para a operação, re
 
 ## 📌 OBSERVAÇÕES FINAIS
 
-O projeto foi estruturado para facilitar a manutenção, escalabilidade e integração com tecnologias futuras, como IoT. O uso de padrões modernos garante robustez e flexibilidade para atender às necessidades da Mottu, promovendo maior controle e eficiência operacional.
+O projeto foi estruturado para facilitar a manutenção, escalabilidade e integração com tecnologias futuras, como IA. O uso de padrões modernos garante robustez e flexibilidade para atender às necessidades da Mottu, promovendo maior controle e eficiência operacional.
