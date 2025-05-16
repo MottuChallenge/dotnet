@@ -1,4 +1,6 @@
-﻿namespace MottuGrid_Dotnet.Domain.Entities
+﻿using MottuGrid_Dotnet.Domain.DTO.Request;
+
+namespace MottuGrid_Dotnet.Domain.Entities
 {
     public class Log
     {
@@ -29,6 +31,12 @@
             {
                 throw new ArgumentException("Message must have less than 150 characters");
             }
+        }
+
+        public void Update(LogRequest request)
+        {
+            Message = request.Message;
+            MotorcycleId = request.MotorcycleId;
         }
 
     }
