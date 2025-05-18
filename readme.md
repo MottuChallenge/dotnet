@@ -60,6 +60,30 @@ Essa solução trará mais agilidade, precisão e controle para a operação, re
 
 ---
 
+## 🚀 COMO RODAR O PROJETO
+
+Abra o projeto no Visual Studio 
+
+### 1. Configurar a string de conexão
+
+No arquivo `appsettings.json`, configure a string de conexão para o banco Oracle na seção `ConnectionStrings`:
+
+```json
+"ConnectionStrings": {
+  "Oracle": "Data Source=oracle.fiap.com.br:1521/orcl;User ID=SEU_USUARIO;Password=SUA_SENHA;"
+}
+```
+### 2. Criar Tabelas no Banco
+No seu Terminal de um comando que é Update-Database.
+Com esse comando seu banco ira criar as tabelas automaticamente.
+
+### 3. Rodar o Projeto e abrir o swagger no Navegador
+
+Depois é so rodar o projeto e abrir o endereço do swagger no seu navegador
+Endereço Normalmente é esse https://localhost:5001/swagger mas se não estiver nesse olhe a porta que seu Visual Studio abriu.
+
+---
+
 ## 📌 OBSERVAÇÕES FINAIS
 
 O projeto foi estruturado para facilitar a manutenção, escalabilidade e integração com tecnologias futuras, como IA. O uso de padrões modernos garante robustez e flexibilidade para atender às necessidades da Mottu, promovendo maior controle e eficiência operacional.
