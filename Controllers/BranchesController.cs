@@ -131,9 +131,9 @@ namespace MottuGrid_Dotnet.Controllers
                 return BadRequest();
             }
             address.UpdateAddress(newAddress);
-            _addressRepository.UpdateAsync(address);
+            await _addressRepository.UpdateAsync(address);
             branch.UpdateBranch(branchRequest);
-            _branchRepository.UpdateAsync(branch);
+            await _branchRepository.UpdateAsync(branch);
 
             return NoContent();
         }
@@ -150,7 +150,7 @@ namespace MottuGrid_Dotnet.Controllers
                 return NotFound();
             }
 
-            _branchRepository.DeleteAsync(branch);
+            await _branchRepository.DeleteAsync(branch);
             
             return NoContent();
         }
