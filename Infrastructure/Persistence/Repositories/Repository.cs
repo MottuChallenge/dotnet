@@ -21,9 +21,10 @@ namespace MottuGrid_Dotnet.Infrastructure.Persistence.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public void DeleteAsync(T entity)
+        public async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -35,9 +36,10 @@ namespace MottuGrid_Dotnet.Infrastructure.Persistence.Repositories
         {
             return await _dbSet.FindAsync(id);
         }
-        public void UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -60,6 +60,63 @@ Essa solução trará mais agilidade, precisão e controle para a operação, re
 
 ---
 
+## Endpoints Principais
+
+### Yards (Pátios)
+| Método | Rota               | Descrição                       |
+|--------|--------------------|---------------------------------|
+| GET    | /api/yards         | Lista todos os pátios           |
+| GET    | /api/yards/{id}    | Busca pátio por ID              |
+| POST   | /api/yards         | Cria um novo pátio              |
+| PUT    | /api/yards/{id}    | Atualiza um pátio existente     |
+| DELETE | /api/yards/{id}    | Remove um pátio                 |
+
+---
+
+### Sections (Setores)
+| Método | Rota                 | Descrição                     |
+|--------|----------------------|-------------------------------|
+| GET    | /api/sections        | Lista todos os setores        |
+| GET    | /api/sections/{id}   | Busca setor por ID            |
+| POST   | /api/sections        | Cria um novo setor            |
+| PUT    | /api/sections/{id}   | Atualiza um setor existente   |
+| DELETE | /api/sections/{id}   | Remove um setor               |
+
+---
+
+### Motorcycles (Motocicletas)
+| Método | Rota                   | Descrição                   |
+|--------|------------------------|-----------------------------|
+| GET    | /api/motorcycles       | Lista todas as motos        |
+| GET    | /api/motorcycles/{id}  | Busca moto por ID           |
+| POST   | /api/motorcycles       | Cadastra uma nova moto      |
+| PUT    | /api/motorcycles/{id}  | Atualiza dados da moto      |
+| DELETE | /api/motorcycles/{id}  | Remove uma moto             |
+
+---
+
+### Logs
+| Método | Rota              | Descrição                        |
+|--------|-------------------|----------------------------------|
+| GET    | /api/logs         | Lista todos os logs              |
+| GET    | /api/logs/{id}    | Busca log por ID                 |
+| POST   | /api/logs         | Cria um novo log                 |
+| PUT    | /api/logs/{id}    | Atualiza dados de um Log         |
+| DELETE | /api/logs/{id}    | Remove um log                    |
+
+---
+
+### Branches
+| Método | Rota              | Descrição                        |
+|--------|-------------------|----------------------------------|
+| GET    | /api/branches         | lista de todas as filiais    |
+| GET    | /api/branches/{id}    | Busca filial por ID          |
+| POST   | /api/branches         | Cria uma nova filial         |
+| PUT    | /api/branches/{id}    | Atualiza dados de uma filial |
+| DELETE | /api/branches/{id}    | Remove uma filial            |
+
+---
+
 ## 🚀 COMO RODAR O PROJETO
 
 Abra o projeto no Visual Studio 
@@ -81,6 +138,22 @@ Com esse comando seu banco ira criar as tabelas automaticamente.
 
 Depois é so rodar o projeto e abrir o endereço do swagger no seu navegador
 Endereço Normalmente é esse https://localhost:5001/swagger mas se não estiver nesse olhe a porta que seu Visual Studio abriu.
+
+---
+
+## 🚀 COMO RODAR O PROJETO VIA DOCKER
+
+### 1. Baixar o Docker se não tiver
+
+Baixe o Docker Desktop e instale em sua máquina.
+
+### 2. Criar Container
+
+Crie um container com o seguinte comando:
+
+```bash
+	docker run -d --name mottu-grid -p 8080:80 pedrohenrique32/mottu-grid-dotnet:1.0
+```
 
 ---
 

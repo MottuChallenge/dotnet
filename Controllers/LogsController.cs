@@ -60,7 +60,7 @@ public class LogsController : ControllerBase
         if (log == null) return NotFound();
 
         log.Update(request);
-        _logRepository.UpdateAsync(log);
+        await _logRepository.UpdateAsync(log);
 
         return NoContent();
     }
@@ -74,7 +74,7 @@ public class LogsController : ControllerBase
         var log = await _logRepository.GetByIdAsync(id);
         if (log == null) return NotFound();
 
-        _logRepository.DeleteAsync(log);
+        await _logRepository.DeleteAsync(log);
         return NoContent();
     }
 }

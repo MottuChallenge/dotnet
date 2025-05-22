@@ -83,7 +83,7 @@ namespace MottuGrid_Dotnet.Controllers
             var moto = await _motorcycleRepository.GetByIdAsync(id);
             if (moto == null) return NotFound();
             moto.Update(request);
-            _motorcycleRepository.UpdateAsync(moto);
+            await _motorcycleRepository.UpdateAsync(moto);
             return NoContent();
         }
 
@@ -95,7 +95,7 @@ namespace MottuGrid_Dotnet.Controllers
         {
             var moto = await _motorcycleRepository.GetByIdAsync(id);
             if (moto == null) return NotFound();
-            _motorcycleRepository.DeleteAsync(moto);
+            await _motorcycleRepository.DeleteAsync(moto);
             return NoContent();
         }
     }

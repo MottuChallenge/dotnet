@@ -102,10 +102,10 @@ namespace MottuGrid_Dotnet.Controllers
             if (existingAddress == null) return BadRequest();
 
             existingAddress.UpdateAddress(newAddress);
-            _addressRepository.UpdateAsync(existingAddress);
+            await _addressRepository.UpdateAsync(existingAddress);
 
             yard.UpdateYard(yardRequest);
-            _yardRepository.UpdateAsync(yard);
+            await _yardRepository.UpdateAsync(yard);
 
             return NoContent();
         }
@@ -119,7 +119,7 @@ namespace MottuGrid_Dotnet.Controllers
             var yard = await _yardRepository.GetByIdAsync(id);
             if (yard == null) return NotFound();
 
-            _yardRepository.DeleteAsync(yard);
+            await _yardRepository.DeleteAsync(yard);
 
             return NoContent();
         }

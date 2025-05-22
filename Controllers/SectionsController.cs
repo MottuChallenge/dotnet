@@ -58,7 +58,7 @@ namespace MottuGrid_Dotnet.Controllers
             if (section == null) return NotFound();
 
             section.Update(request);
-            _sectorRepository.UpdateAsync(section);
+            await _sectorRepository.UpdateAsync(section);
 
             return NoContent();
         }
@@ -72,7 +72,7 @@ namespace MottuGrid_Dotnet.Controllers
             var sector = await _sectorRepository.GetByIdAsync(id);
             if (sector == null) return NotFound();
 
-            _sectorRepository.DeleteAsync(sector);
+            await _sectorRepository.DeleteAsync(sector);
 
             return NoContent();
         }
