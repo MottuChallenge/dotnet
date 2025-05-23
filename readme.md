@@ -152,10 +152,45 @@ Baixe o Docker Desktop e instale em sua máquina.
 Crie um container com o seguinte comando:
 
 ```bash
-	docker run -d --name mottu-grid -p 8080:80 pedrohenrique32/mottu-grid-dotnet:1.0
+	docker run -d --name mottu-grid -p 8080:80 pedrohenrique32/mottu-grid-dotnet
 ```
 
 ---
+
+## Script Azure CLI
+
+1 - az group create -l eastus -n rg-vm-challenge
+ 
+2 - az vm create --resource-group rg-vm-challenge --name vm-challenge --image Canonical:ubuntu-24_04-lts:minimal:24.04.202505020 --size Standard_B2s --admin-username admin_fiap --admin-password admin_fiap@123
+
+4 - az network nsg rule create --resource-group rg-vm-challenge --nsg-name vm-challengeNSG --name port_8080 --protocol tcp --priority 1010 --destination-port-range 8080
+ 
+5 - az network nsg rule create --resource-group rg-vm-challenge --nsg-name vm-challengeNSG --name port_80 --protocol tcp --priority 1020 --destination-port-range 80
+ 
+6 - Instalação do Docker na máquina Linux
+
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+<pre> echo \
+	"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \ 
+	$(. /etc/os-release && echo \"${UBUNTU_CODENAME:-$VERSION_CODENAME}\") stable" | \ 
+	sudo tee /etc/apt/sources.list.d/docker.list > /dev/null  </pre>
+
+sudo apt-get update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+sudo usermod -aG docker $USER
+
+newgrp docker
+
+7 - rodar o projeto
+
+docker run --name mottu -d -p 8080:80 pedrohenrique32/mottu-grid-dotnet
 
 ## 📌 OBSERVAÇÕES FINAIS
 
