@@ -1,5 +1,6 @@
 ﻿using MottuChallenge.Application.DTOs.Response;
-using MottuChallenge.Infrastructure.Repositories;
+using MottuChallenge.Application.Helpers;
+using MottuChallenge.Application.Repositories;
 
 namespace MottuChallenge.Application.UseCases.Sectors
 {
@@ -21,7 +22,7 @@ namespace MottuChallenge.Application.UseCases.Sectors
                 Id = sector.Id,
                 YardId = sector.YardId,
                 SectorTypeId = sector.SectorTypeId,
-                Points = sector.Points.Select(p => new PointResponseDto { PointOrder = p.PointOrder, X = p.X, Y = p.Y }).ToList(),
+                Points = PolygonPointsMapping.CreateListOfPointResponseDto(sector.Points),
                 Spots = sector.Spots.Select(s => new SpotResponseDto { SpotId = s.SpotId, SectorId = s.SectorId, Status = s.Status, MotorcycleId = s.MotorcycleId, X = s.X, Y = s.Y }).ToList()
             };
         }

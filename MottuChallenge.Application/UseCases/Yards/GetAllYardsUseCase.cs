@@ -1,8 +1,8 @@
 ﻿using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Helpers;
 using MottuChallenge.Application.Interfaces;
+using MottuChallenge.Application.Repositories;
 using MottuChallenge.Application.UseCases.Addresses;
-using MottuChallenge.Infrastructure.Repositories;
 
 namespace MottuChallenge.Application.UseCases.Yards
 {
@@ -31,7 +31,7 @@ namespace MottuChallenge.Application.UseCases.Yards
                     Id = yard.Id,
                     Name = yard.Name,
                     Address = AddressMapping.CreateAddressResponseDto(address),
-                    Points = PolygonPointsMapping.CreateListOfPointResponseDto(yard)
+                    Points = PolygonPointsMapping.CreateListOfPointResponseDto(yard.Points)
                 });
             }
 
