@@ -1,9 +1,9 @@
 ﻿using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.Interfaces;
+using MottuChallenge.Application.Repositories;
 using MottuChallenge.Application.UseCases.Addresses;
 using MottuChallenge.Domain.Entities;
 using MottuChallenge.Domain.ValueObjects;
-using MottuChallenge.Infrastructure.Repositories;
 
 namespace MottuChallenge.Application.UseCases.Yards
 {

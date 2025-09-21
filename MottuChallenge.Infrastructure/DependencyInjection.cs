@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MottuChallenge.Application.Interfaces;
+using MottuChallenge.Application.Repositories;
 using MottuChallenge.Infrastructure.Persistence;
 using MottuChallenge.Infrastructure.Repositories;
 using MottuChallenge.Infrastructure.Services;

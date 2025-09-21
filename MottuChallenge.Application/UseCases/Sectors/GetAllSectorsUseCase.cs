@@ -1,5 +1,5 @@
 ﻿using MottuChallenge.Application.DTOs.Response;
-using MottuChallenge.Infrastructure.Repositories;
+using MottuChallenge.Application.Repositories;
 
 namespace MottuChallenge.Application.UseCases.Sectors
 {
