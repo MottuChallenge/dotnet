@@ -1,21 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.DTOs.Response;
-using MottuChallenge.Application.Services;
+using MottuChallenge.Application.UseCases.Sectors;
 
 namespace MottuChallenge.Api.Controllers
 {
     [Route("api/sectors")]
     [ApiController]
-    public class SectorController(ISectorService sectorService) : ControllerBase
+    public class SectorController : ControllerBase
     {
-        private readonly ISectorService _sectorService = sectorService;
+        private readonly CreateSectorUseCase _createSectorUseCase;
+        private readonly GetAllSectorsUseCase _getAllSectorsUseCase;
+        private readonly GetSectorByIdUseCase _getSectorByIdUseCase;
+
+        public SectorController(CreateSectorUseCase createSectorUseCase, GetAllSectorsUseCase getAllSectorsUseCase, GetSectorByIdUseCase getSectorByIdUseCase)
+        {
+            _createSectorUseCase = createSectorUseCase;
+            _getAllSectorsUseCase = getAllSectorsUseCase;
+            _getSectorByIdUseCase = getSectorByIdUseCase;
+        }
 
         [HttpPost]
         [ProducesResponseType(typeof(void), 201)]
         public async Task<IActionResult> Post([FromBody] SectorCreateDto sectorCreateDto)
         {
-            await _sectorService.SaveSectorAsync(sectorCreateDto);
+            await _createSectorUseCase.SaveSector(sectorCreateDto);
             return Created();
         }
 
@@ -24,7 +33,7 @@ namespace MottuChallenge.Api.Controllers
         [ProducesResponseType(typeof(List<SectorResponseDto>), 200)]
         public async Task<IActionResult> GetAllSectorsAsync()
         {
-            var sectors = await _sectorService.GetAllSectorsAsync();
+            var sectors = await _getAllSectorsUseCase.FindAllSectors();
             return Ok(sectors);
         }
 
@@ -33,7 +42,7 @@ namespace MottuChallenge.Api.Controllers
         [ProducesResponseType(typeof(SectorResponseDto), 200)]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var sector = await _sectorService.GetSectorByIdAsync(id);
+            var sector = await _getSectorByIdUseCase.FindSectorById(id);
             return Ok(sector);
         }
     }

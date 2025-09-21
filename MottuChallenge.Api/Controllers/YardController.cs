@@ -1,20 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MottuChallenge.Application.DTOs.Request;
-using MottuChallenge.Application.Services;
+using MottuChallenge.Application.UseCases.Yards;
 
 namespace MottuChallenge.Api.Controllers
 {
     [Route("api/yards")]
     [ApiController]
-    public class YardController(IYardService yardService) : ControllerBase
+    public class YardController : ControllerBase
     {
-        private readonly IYardService _yardService = yardService;
+        private readonly CreateYardUseCase _createYardUseCase;
+        private readonly GetAllYardsUseCase _getAllYardsUseCase;
+        private readonly GetYardByIdUseCase _getYardByIdUseCase;
+
+        public YardController(CreateYardUseCase createYardUseCase, GetAllYardsUseCase getAllYardsUseCase, GetYardByIdUseCase getYardByIdUseCase)
+        {
+            _createYardUseCase = createYardUseCase;
+            _getAllYardsUseCase = getAllYardsUseCase;
+            _getYardByIdUseCase = getYardByIdUseCase;
+        }
 
         [HttpPost]
         [ProducesResponseType(typeof(void), 201)]
         public async Task<IActionResult> Post([FromBody] CreateYardDto createYardDto)
         {
-            await _yardService.SaveYardAsync(createYardDto);
+            await _createYardUseCase.SaveYard(createYardDto);
             return Created();
         }
 
@@ -22,7 +31,7 @@ namespace MottuChallenge.Api.Controllers
         [ProducesResponseType(typeof(void), 200)]
         public async Task<IActionResult> GetAllYardsAsync()
         {
-            var yards = await _yardService.GetAllYardsAsync();
+            var yards = await _getAllYardsUseCase.FindAllYards();
             return Ok(yards);
         }
 
@@ -30,7 +39,7 @@ namespace MottuChallenge.Api.Controllers
         [ProducesResponseType(typeof(void), 200)]
         public async Task<IActionResult> getById([FromRoute] Guid id)
         {
-            var yard = await _yardService.GetYardResponseByIdAsync(id);
+            var yard = await _getYardByIdUseCase.FindYardById(id);
             return Ok(yard);
         }
        
