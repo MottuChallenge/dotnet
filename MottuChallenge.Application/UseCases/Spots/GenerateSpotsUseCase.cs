@@ -1,10 +1,14 @@
 ﻿using MottuChallenge.Application.Helpers;
 using MottuChallenge.Domain.Entities;
-using System.Numerics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace MottuChallenge.Application.Services
+namespace MottuChallenge.Application.UseCases.Spots
 {
-    public class SpotService : ISpotService
+    public class GenerateSpotsUseCase
     {
         public List<Spot> GenerateSpot(Sector sector, double width, double height)
         {
