@@ -25,6 +25,7 @@ namespace MottuChallenge.Application
             services.AddScoped<GetAllYardsUseCase>();
             services.AddScoped<GetYardByIdUseCase>();
             services.AddScoped<GetYardEntityByIdUseCase>();
+            services.AddScoped<GetSectorTypeByIdUseCase>();
 
             return services;
         }
