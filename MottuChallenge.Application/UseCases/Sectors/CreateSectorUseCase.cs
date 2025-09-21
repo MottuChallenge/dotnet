@@ -1,6 +1,7 @@
 ﻿using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.Helpers;
-using MottuChallenge.Application.Services;
+using MottuChallenge.Application.UseCases.Spots;
+using MottuChallenge.Application.UseCases.Yards;
 using MottuChallenge.Domain.Entities;
 using MottuChallenge.Domain.ValueObjects;
 using MottuChallenge.Infrastructure.Repositories;
@@ -10,21 +11,22 @@ namespace MottuChallenge.Application.UseCases.Sectors
     public class CreateSectorUseCase
     {
         private readonly ISectorRepository _sectorRepository;
-        private readonly IYardService _yardService;
-        private readonly ISpotService _spotService;
+        private readonly GetYardEntityByIdUseCase _getYardEntityByIdUseCase;
+        private readonly GenerateSpotsUseCase _generateSpotsUseCase;
 
-        public CreateSectorUseCase(ISectorRepository sectorRepository, IYardService yardService, ISpotService spotService)
+        public CreateSectorUseCase(ISectorRepository sectorRepository, GetYardEntityByIdUseCase getYardEntityByIdUseCase, GenerateSpotsUseCase generateSpotsUseCase)
         {
             _sectorRepository = sectorRepository;
-            _yardService = yardService;
-            _spotService = spotService;
+            _getYardEntityByIdUseCase = getYardEntityByIdUseCase;
+            _generateSpotsUseCase = generateSpotsUseCase;
         }
 
         public async Task<Sector> SaveSector(SectorCreateDto sectorCreateDto)
         {
             var sector = new Sector(sectorCreateDto.SectorTypeId, sectorCreateDto.YardId);
 
-            var yard = await _yardService.GetYardByIdAsync(sector.YardId);
+            var yard = await _getYardEntityByIdUseCase.FindYardById(sector.YardId);
+
             ValidateYardExists(yard);
             ValidateSectorInsideYard(sector, yard);
 
@@ -34,7 +36,7 @@ namespace MottuChallenge.Application.UseCases.Sectors
             foreach (var point in sectorCreateDto.Points)
                 sector.AddPoint(new PolygonPoint(point.PointOrder, point.X, point.Y));
 
-            var spots = _spotService.GenerateSpot(sector, 2, 2);
+            var spots = _generateSpotsUseCase.GenerateSpot(sector, 2, 2);
             foreach (var spot in spots)
                 sector.AddSpot(spot);
 
