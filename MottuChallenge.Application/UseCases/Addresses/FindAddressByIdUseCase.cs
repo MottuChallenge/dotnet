@@ -1,5 +1,5 @@
-﻿using MottuChallenge.Domain.Entities;
-using MottuChallenge.Infrastructure.Repositories;
+﻿using MottuChallenge.Application.Repositories;
+using MottuChallenge.Domain.Entities;
 
 namespace MottuChallenge.Application.UseCases.Addresses
 {
@@ -9,7 +9,17 @@ namespace MottuChallenge.Application.UseCases.Addresses
 
         public async Task<Address> GetAddressByIdAsync(Guid id)
         {
-            return await _addressRepository.GetAddressByIdAsync(id);
+            var address = await _addressRepository.GetAddressByIdAsync(id);
+            ValidateAddressExists(address);
+            return address;
+        }
+
+        private void ValidateAddressExists(Address address)
+        {
+            if (address == null)
+            {
+                throw new KeyNotFoundException("Address not Found");
+            }
         }
     }
 }

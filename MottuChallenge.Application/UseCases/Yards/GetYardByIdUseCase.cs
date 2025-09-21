@@ -1,8 +1,8 @@
 ﻿using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Helpers;
-using MottuChallenge.Application.Interfaces;
 using MottuChallenge.Application.UseCases.Addresses;
-using MottuChallenge.Infrastructure.Repositories;
+using MottuChallenge.Domain.Entities;
+using MottuChallenge.Application.Repositories;
 
 namespace MottuChallenge.Application.UseCases.Yards
 {
@@ -20,6 +20,7 @@ namespace MottuChallenge.Application.UseCases.Yards
         public async Task<YardResponseDto> FindYardById(Guid id)
         {
             var yard = await _yardRepository.GetYardByIdAsync(id);
+            ValidateYardExists(yard);
             var address = await _findAddressByIdUseCase.GetAddressByIdAsync(yard.AddressId);
             yard.Address = address;
 
@@ -28,8 +29,16 @@ namespace MottuChallenge.Application.UseCases.Yards
                 Id = yard.Id,
                 Name = yard.Name,
                 Address = AddressMapping.CreateAddressResponseDto(address),
-                Points = PolygonPointsMapping.CreateListOfPointResponseDto(yard)
+                Points = PolygonPointsMapping.CreateListOfPointResponseDto(yard.Points)
             };
+        }
+
+        private void ValidateYardExists(Yard yard)
+        {
+            if (yard == null)
+            {
+                throw new KeyNotFoundException("Yard not Found");
+            }
         }
     }
 }
