@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MottuChallenge.Application.Interfaces;
 using MottuChallenge.Infrastructure.Persistence;
 using MottuChallenge.Infrastructure.Repositories;
+using MottuChallenge.Infrastructure.Services;
 
 namespace MottuChallenge.Infrastructure
 {
@@ -26,5 +28,12 @@ namespace MottuChallenge.Infrastructure
             services.AddScoped<IAddressRepository, AddressRepository>();
             return services;
         }
+
+        public static IServiceCollection AddServices(this IServiceCollection services)
+        {
+            services.AddHttpClient<IAddressProvider, FindAddressByApiViaCep>();
+            return services;
+        }
+
     }
 }
