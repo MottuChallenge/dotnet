@@ -1,4 +1,4 @@
-﻿using MottuChallenge.Application.Services;
+﻿using MottuChallenge.Application.Interfaces;
 using MottuChallenge.Domain.Entities;
 
 
