@@ -1,4 +1,4 @@
-using MottuChallenge.Application.Services;
+using MottuChallenge.Application;
 using MottuChallenge.Infrastructure;
 
 namespace MottuChallenge.Api
@@ -12,12 +12,9 @@ namespace MottuChallenge.Api
             // Add services to the container.
             builder.Services.AddDbContext(builder.Configuration);
             builder.Services.AddRepositories();
+            builder.Services.AddServices();
+            builder.Services.AddUseCases();
             builder.Services.AddControllers();
-            builder.Services.AddScoped<IYardService, YardService>();
-            builder.Services.AddHttpClient<IAddressService, AddressService>();
-            builder.Services.AddScoped<ISectorService, SectorService>();
-            builder.Services.AddScoped<ISpotService, SpotService>();
-            builder.Services.AddScoped<ISectorTypeService, SectorTypeService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
