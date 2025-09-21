@@ -1,7 +1,7 @@
 ﻿using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Infrastructure.Repositories;
 
-namespace MottuChallenge.Application.UseCase.Sectors
+namespace MottuChallenge.Application.UseCases.Sectors
 {
     public class GetAllSectorsUseCase
     {

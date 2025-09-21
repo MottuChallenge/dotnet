@@ -2,7 +2,7 @@
 using MottuChallenge.Domain.Entities;
 
 
-namespace MottuChallenge.Application.UseCase.Addresses
+namespace MottuChallenge.Application.UseCases.Addresses
 {
     public class FindAddressByCepUseCase
     {

@@ -1,7 +1,7 @@
 ﻿using MottuChallenge.Domain.Entities;
 using MottuChallenge.Infrastructure.Repositories;
 
-namespace MottuChallenge.Application.UseCase.Addresses
+namespace MottuChallenge.Application.UseCases.Addresses
 {
     public class FindAddressByIdUseCase(IAddressRepository addressRepository)
     {

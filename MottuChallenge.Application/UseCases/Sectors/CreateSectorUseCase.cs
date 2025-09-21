@@ -5,7 +5,7 @@ using MottuChallenge.Domain.Entities;
 using MottuChallenge.Domain.ValueObjects;
 using MottuChallenge.Infrastructure.Repositories;
 
-namespace MottuChallenge.Application.UseCase.Sectors
+namespace MottuChallenge.Application.UseCases.Sectors
 {
     public class CreateSectorUseCase
     {
