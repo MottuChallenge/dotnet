@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MottuChallenge.Application\MottuChallenge.Application.csproj" />
     <ProjectReference Include="..\MottuChallenge.Domain\MottuChallenge.Domain.csproj" />
   </ItemGroup>
 
