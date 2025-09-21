@@ -1,4 +1,6 @@
-﻿using MottuChallenge.Domain.Validations;
+﻿using MottuChallenge.Application.Helpers;
+using MottuChallenge.Domain.Exceptions;
+using MottuChallenge.Domain.Validations;
 using MottuChallenge.Domain.ValueObjects;
 
 namespace MottuChallenge.Domain.Entities
@@ -17,18 +19,57 @@ namespace MottuChallenge.Domain.Entities
         private readonly List<Spot> _spots = new();
         public IReadOnlyCollection<Spot> Spots => _spots.AsReadOnly();
 
-        public Sector(Guid sectorTypeId, Guid yardId)
+        public Sector()
         {
-            Guard.AgainstNullOrEmpty(sectorTypeId, nameof(sectorTypeId), nameof(Sector));
-            Guard.AgainstNullOrEmpty(yardId, nameof(yardId), nameof(Sector));
             this.Id = Guid.NewGuid();
-            this.SectorTypeId = sectorTypeId;
-            this.YardId = yardId;
         }
 
-        private Sector() { }
+        public void AddSectorType(SectorType sectorType)
+        {
+            if (sectorType == null || sectorType.Id != SectorTypeId)
+                throw new DomainValidationException("SectorType not be null", nameof(sectorType), nameof(Sector));
+            SectorType = sectorType;
+            SectorTypeId = sectorType.Id;
+        }
 
-        public void AddSpot(Spot spot) => _spots.Add(spot);
-        public void AddPoint(PolygonPoint point) => _points.Add(point);
+        public void AddYard(Yard yard)
+        {
+            if (yard == null || yard.Id != YardId)
+                throw new DomainValidationException("Yard not be null", nameof(yard), nameof(Sector));
+
+            Yard = yard;
+            YardId = yard.Id;
+        }
+
+        public void AddSpots(IEnumerable<Spot> spots)
+        {
+            _spots.AddRange(spots);
+        }
+        public void AddPoints(IEnumerable<PolygonPoint> points)
+        {
+            if (points.Count() < 3)
+                throw new DomainValidationException("O setor deve ter pelo menos 3 pontos", nameof(points), nameof(Sector));
+            _points.AddRange(points);
+        }
+
+        public void ValidateInsideYard()
+        {
+            bool isInside = _points.All(p => GeometryHelper.IsPointInsidePolygon(p.X, p.Y, Yard.Points.ToList()));
+            if (!isInside)
+                throw new DomainValidationException("O setor deve estar completamente dentro do pátio", nameof(_points), nameof(Sector));
+        }
+
+        public void ValidateOverlap(IEnumerable<Sector> existingSectors)
+        {
+            if (!existingSectors.Any())
+                return;
+
+            foreach (var existing in existingSectors)
+            {
+                bool overlap = _points.Any(p => GeometryHelper.IsPointInsidePolygon(p.X, p.Y, existing.Points.ToList()));
+                if (overlap)
+                    throw new DomainValidationException("O setor não deve sobrepor outros setores no mesmo pátio", nameof(_points), nameof(Sector));
+            }
+        }
     }
 }
