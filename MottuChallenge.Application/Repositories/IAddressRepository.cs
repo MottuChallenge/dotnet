@@ -1,6 +1,6 @@
 ﻿using MottuChallenge.Domain.Entities;
 
-namespace MottuChallenge.Infrastructure.Repositories
+namespace MottuChallenge.Application.Repositories
 {
     public interface IAddressRepository
     {

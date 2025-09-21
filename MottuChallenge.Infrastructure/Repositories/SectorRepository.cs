@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MottuChallenge.Application.Repositories;
 using MottuChallenge.Domain.Entities;
 using MottuChallenge.Infrastructure.Persistence;
 

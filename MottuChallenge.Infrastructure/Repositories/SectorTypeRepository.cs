@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MottuChallenge.Application.Repositories;
 using MottuChallenge.Domain.Entities;
 using MottuChallenge.Infrastructure.Persistence;
 
@@ -34,7 +35,7 @@ namespace MottuChallenge.Infrastructure.Repositories
             return sectorType;
         }
 
-        public async Task<SectorType> FindAsync(Guid id)
+        public async Task<SectorType> FindByIdAsync(Guid id)
         {
             return await _context.SectorTypes.FindAsync(id);
         }

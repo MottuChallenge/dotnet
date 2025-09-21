@@ -1,4 +1,5 @@
-﻿using MottuChallenge.Domain.Entities;
+﻿using MottuChallenge.Application.Repositories;
+using MottuChallenge.Domain.Entities;
 using MottuChallenge.Infrastructure.Persistence;
 
 namespace MottuChallenge.Infrastructure.Repositories

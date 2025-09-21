@@ -1,6 +1,6 @@
 ﻿using MottuChallenge.Domain.Entities;
 
-namespace MottuChallenge.Infrastructure.Repositories
+namespace MottuChallenge.Application.Repositories
 {
     public interface ISectorTypeRepository
     {
@@ -13,7 +13,7 @@ namespace MottuChallenge.Infrastructure.Repositories
 
         Task<SectorType> UpdateSectorTypeAsync(SectorType sectorType);
 
-        Task<SectorType> FindAsync(Guid id);
+        Task<SectorType> FindByIdAsync(Guid id);
 
         Task DeleteSectorTypeAsync(SectorType sectorType);
     }
