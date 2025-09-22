@@ -26,7 +26,7 @@ namespace MottuChallenge.Domain.Entities
 
         public void AddSectorType(SectorType sectorType)
         {
-            if (sectorType == null || sectorType.Id != SectorTypeId)
+            if (sectorType == null)
                 throw new DomainValidationException("SectorType not be null", nameof(sectorType), nameof(Sector));
             SectorType = sectorType;
             SectorTypeId = sectorType.Id;
@@ -34,7 +34,7 @@ namespace MottuChallenge.Domain.Entities
 
         public void AddYard(Yard yard)
         {
-            if (yard == null || yard.Id != YardId)
+            if (yard == null)
                 throw new DomainValidationException("Yard not be null", nameof(yard), nameof(Sector));
 
             Yard = yard;
