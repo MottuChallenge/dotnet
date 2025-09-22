@@ -38,6 +38,39 @@ namespace MottuChallenge.Domain.Entities
             SpotId = spot.SpotId;
         }
 
+        public void UpdateModel(string model)
+        {
+            Guard.AgainstNullOrWhitespace(model, nameof(model), nameof(Motorcycle));
+            Model = model;
+        }
+
+        public void UpdateEngineType(EngineType engineType)
+        {
+            ValidateEngineType(engineType);
+            EngineType = engineType;
+        }
+
+        public void UpdatePlate(string plate)
+        {
+            ValidatePlate(plate);
+            Plate = plate;
+        }
+
+        public void UpdateLastRevisionDate(DateTime lastRevisionDate)
+        {
+            ValidateLastRevisionDate(lastRevisionDate);
+            LastRevisionDate = lastRevisionDate;
+        }
+
+        public void RemoveSpot()
+        {
+            if (Spot == null) return;
+            Spot.RemoveMotorcycle();
+            Spot = null;
+            SpotId = null;
+            
+        }
+
         private void ValidatePlate(string plate)
         {
             Guard.AgainstNullOrWhitespace(plate, nameof(plate), nameof(Motorcycle));
