@@ -1,4 +1,5 @@
 ﻿using MottuChallenge.Domain.Enums;
+using MottuChallenge.Domain.Exceptions;
 using MottuChallenge.Domain.Validations;
 using System.Text.Json.Serialization;
 
@@ -16,11 +17,9 @@ namespace MottuChallenge.Domain.Entities
         public Motorcycle? Motorcycle { get; private set; }
         public Guid? MotorcycleId { get; set; }
 
-        public Spot(double x, double y, Guid sectorId)
+        public Spot(double x, double y)
         {
             Guard.AgainstNegativeCoordinates(x, y, nameof(Spot));
-            Guard.AgainstNullOrEmpty(sectorId, nameof(sectorId), nameof(Spot));
-            this.SectorId = sectorId;
             this.SpotId = Guid.NewGuid();
             this.X = x;
             this.Y = y;
@@ -28,6 +27,14 @@ namespace MottuChallenge.Domain.Entities
 
         }
         public Spot() { }
+
+        public void SetSector(Sector sector)
+        {
+            if (sector == null)
+                throw new DomainValidationException("Sector cannot be null", nameof(sector), nameof(Spot));
+            Sector = sector;
+            SectorId = sector.Id;
+        }
 
         public void AssignMotorcycle(Motorcycle motorcycle)
         {

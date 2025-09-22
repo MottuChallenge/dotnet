@@ -24,7 +24,9 @@ namespace MottuChallenge.Application.UseCases.Spots
                 {
                     if (GeometryHelper.IsPointInsidePolygon(x, y, sector.Points.ToList()))
                     {
-                        spots.Add(new Spot(x, y, sector.Id));
+                        var spot = new Spot(x, y);
+                        spot.SetSector(sector);
+                        spots.Add(spot);
                     }
                     x += width;
                 }
