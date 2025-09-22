@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MottuChallenge.Application.UseCases.Addresses;
 using MottuChallenge.Application.UseCases.Sectors;
 using MottuChallenge.Application.UseCases.SectorTypes;
 using MottuChallenge.Application.UseCases.Spots;
