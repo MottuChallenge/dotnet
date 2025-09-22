@@ -1,6 +1,9 @@
 ﻿using MottuChallenge.Application.DTOs.Request;
+using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Repositories;
 using MottuChallenge.Domain.Entities;
+using MottuChallenge.Domain.Enums;
+using System.Reflection;
 namespace MottuChallenge.Application.UseCases.Motorcycles
 {
     public class CreateMotorcycleUseCase
@@ -14,7 +17,7 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
             _sectorRepository = sectorRepository;
         }
 
-        public async Task SaveMotorcycleAsync(CreateMotorcycleDto motorcycleDto)
+        public async Task<MotorcycleResponseDto> SaveMotorcycleAsync(CreateMotorcycleDto motorcycleDto)
         {
             var motorcycle = new Motorcycle(motorcycleDto.Model, motorcycleDto.EngineType, motorcycleDto.Plate, motorcycleDto.LastRevisionDate);
             await _motorcycleRepository.SaveMotorcycleAsync(motorcycle);
@@ -27,6 +30,17 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
                 await _sectorRepository.UpdateAsync(sector);
                 await _motorcycleRepository.UpdateAsync(motorcycle);
             }
+
+            return new MotorcycleResponseDto
+            {
+                Id = motorcycle.Id,
+                Model = motorcycle.Model,
+                EngineType = motorcycle.EngineType,
+                Plate = motorcycle.Plate,
+                LastRevisionDate = motorcycle.LastRevisionDate,
+                SpotId = motorcycle.SpotId
+            }
+            ;
         }
     }
 }
