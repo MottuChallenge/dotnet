@@ -8,11 +8,9 @@ namespace MottuChallenge.Application.UseCases.Yards
     public class GetAllYardsUseCase
     {
         private readonly IYardRepository _yardRepository;
-        private readonly FindAddressByIdUseCase _findAddressByIdUseCase;
-        public GetAllYardsUseCase(IYardRepository yardRepository, FindAddressByIdUseCase findAddressByIdUseCase)
+        public GetAllYardsUseCase(IYardRepository yardRepository)
         {
             _yardRepository = yardRepository;
-            _findAddressByIdUseCase = findAddressByIdUseCase;
         }
 
         public async Task<List<YardResponseDto>> FindAllYards()
@@ -22,14 +20,12 @@ namespace MottuChallenge.Application.UseCases.Yards
 
             foreach (var yard in yards)
             {
-                var address = await _findAddressByIdUseCase.GetAddressByIdAsync(yard.AddressId);
-                yard.SetAddress(address);
 
                 result.Add(new YardResponseDto
                 {
                     Id = yard.Id,
                     Name = yard.Name,
-                    Address = AddressMapping.CreateAddressResponseDto(address),
+                    Address = AddressMapping.CreateAddressResponseDto(yard.Address),
                     Points = PolygonPointsMapping.CreateListOfPointResponseDto(yard.Points)
                 });
             }

@@ -7,20 +7,16 @@ namespace MottuChallenge.Application.UseCases.Yards
     public class GetYardEntityByIdUseCase
     {
         private readonly IYardRepository _yardRepository;
-        private readonly FindAddressByIdUseCase _findAddressByIdUseCase;
 
-        public GetYardEntityByIdUseCase(IYardRepository yardRepository, FindAddressByIdUseCase findAddressByIdUseCase)
+        public GetYardEntityByIdUseCase(IYardRepository yardRepository)
         {
             _yardRepository = yardRepository;
-            _findAddressByIdUseCase = findAddressByIdUseCase;
         }
 
         public async Task<Yard> FindYardById(Guid id)
         {
             var yard = await _yardRepository.GetYardByIdAsync(id);
             ValidateYardExists(yard);
-            var address = await _findAddressByIdUseCase.GetAddressByIdAsync(yard.AddressId);
-            yard.SetAddress(address);
 
             return yard;
         }
