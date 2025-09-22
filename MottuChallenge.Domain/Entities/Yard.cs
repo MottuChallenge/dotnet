@@ -45,5 +45,11 @@ namespace MottuChallenge.Domain.Entities
                 throw new DomainValidationException("O setor deve ter pelo menos 3 pontos", nameof(points), nameof(Sector));
             _points.AddRange(points);
         }
+
+        public void UpdateName(string name)
+        {
+            Guard.AgainstNullOrWhitespace("Name cannot be empty", nameof(name), nameof(Yard));
+            Name = name;
+        }
     }
 }
