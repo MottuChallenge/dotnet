@@ -18,12 +18,18 @@ namespace MottuChallenge.Infrastructure.Repositories
 
         public async Task<Yard?> GetYardByIdAsync(Guid id)
         {
-            return await _context.Yards.FindAsync(id);
+            return await _context.Yards
+                .Include(y => y.Address)
+                .Include(y => y.Points)
+                .FirstOrDefaultAsync(y => y.Id == id);
         }
 
         public async Task<List<Yard>> GetAllYardsAsync()
         {
-            return await _context.Yards.ToListAsync();
+            return await _context.Yards
+                .Include(y => y.Address)
+                .Include(y => y.Points)
+                .ToListAsync();
         }
     }
 }
