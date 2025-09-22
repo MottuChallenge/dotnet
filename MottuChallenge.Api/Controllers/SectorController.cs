@@ -15,12 +15,14 @@ namespace MottuChallenge.Api.Controllers
         private readonly CreateSectorUseCase _createSectorUseCase;
         private readonly GetAllSectorsUseCase _getAllSectorsUseCase;
         private readonly GetSectorByIdUseCase _getSectorByIdUseCase;
+        private readonly UpdateSectorUseCase _updateSectorUseCase;
 
-        public SectorController(CreateSectorUseCase createSectorUseCase, GetAllSectorsUseCase getAllSectorsUseCase, GetSectorByIdUseCase getSectorByIdUseCase)
+        public SectorController(CreateSectorUseCase createSectorUseCase, GetAllSectorsUseCase getAllSectorsUseCase, GetSectorByIdUseCase getSectorByIdUseCase, UpdateSectorUseCase updateSectorUseCase)
         {
             _createSectorUseCase = createSectorUseCase;
             _getAllSectorsUseCase = getAllSectorsUseCase;
             _getSectorByIdUseCase = getSectorByIdUseCase;
+            _updateSectorUseCase = updateSectorUseCase;
         }
 
         [HttpPost]
@@ -82,6 +84,27 @@ namespace MottuChallenge.Api.Controllers
             {
                 return NotFound(new { message = ex.Message });
 
+            }
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(void), 204)]
+        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(string), 404)]
+        public async Task<IActionResult> UpdateSectorType([FromRoute] Guid id, [FromBody] UpdateSectorDto dto)
+        {
+            try
+            {
+                await _updateSectorUseCase.UpdateSectorTypeAsync(id, dto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
     }
