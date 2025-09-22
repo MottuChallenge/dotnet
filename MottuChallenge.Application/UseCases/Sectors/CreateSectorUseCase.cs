@@ -27,7 +27,7 @@ namespace MottuChallenge.Application.UseCases.Sectors
         {
             var sector = new Sector();
 
-            var yard = await _getYardEntityByIdUseCase.FindYardById(sector.YardId);
+            var yard = await _getYardEntityByIdUseCase.FindYardById(sectorCreateDto.YardId);
 
             var sectorType = await _getSectorTypeByIdUseCase.FindSectorTypeById(sectorCreateDto.SectorTypeId);
 
