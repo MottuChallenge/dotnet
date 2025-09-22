@@ -11,5 +11,6 @@ namespace MottuChallenge.Application.Repositories
         Task<List<Sector>> GetAllSectorsAsync();
         Task<Sector> GetSectorBySpotId(Guid spotId);
         Task<Sector> UpdateAsync(Sector sector);
+        Task DeleteAsync(Sector sector);
     }
 }

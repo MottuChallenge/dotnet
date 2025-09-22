@@ -16,13 +16,20 @@ namespace MottuChallenge.Api.Controllers
         private readonly GetAllSectorsUseCase _getAllSectorsUseCase;
         private readonly GetSectorByIdUseCase _getSectorByIdUseCase;
         private readonly UpdateSectorUseCase _updateSectorUseCase;
+        private readonly DeleteSectorUseCase _deleteSectorUseCase;
 
-        public SectorController(CreateSectorUseCase createSectorUseCase, GetAllSectorsUseCase getAllSectorsUseCase, GetSectorByIdUseCase getSectorByIdUseCase, UpdateSectorUseCase updateSectorUseCase)
+        public SectorController(
+            CreateSectorUseCase createSectorUseCase, 
+            GetAllSectorsUseCase getAllSectorsUseCase,
+            GetSectorByIdUseCase getSectorByIdUseCase, 
+            UpdateSectorUseCase updateSectorUseCase, 
+            DeleteSectorUseCase deleteSectorUseCase)
         {
             _createSectorUseCase = createSectorUseCase;
             _getAllSectorsUseCase = getAllSectorsUseCase;
             _getSectorByIdUseCase = getSectorByIdUseCase;
             _updateSectorUseCase = updateSectorUseCase;
+            _deleteSectorUseCase = deleteSectorUseCase;
         }
 
         [HttpPost]
@@ -107,5 +114,27 @@ namespace MottuChallenge.Api.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(void), 204)]
+        [ProducesResponseType(typeof(string), 404)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> DeleteSector([FromRoute] Guid id)
+        {
+            try
+            {
+                await _deleteSectorUseCase.DeleteSectorAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
     }
 }
