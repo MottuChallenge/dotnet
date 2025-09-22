@@ -3,6 +3,7 @@ using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Pagination;
 using MottuChallenge.Application.UseCases.Motorcycles;
+using MottuChallenge.Domain.Exceptions;
 
 namespace MottuChallenge.API.Controllers
 {
@@ -12,17 +13,21 @@ namespace MottuChallenge.API.Controllers
     {
         private readonly CreateMotorcycleUseCase _createMotorcycleUseCase;
         private readonly GetAllMotorcyclesPageableUseCase _getAllMotorcyclesPageableUseCase;
+        private readonly UpdateMotorcycleUseCase _updateMotorcycleUseCase;
+
 
         public MotorcyclesController(
             CreateMotorcycleUseCase createMotorcycleUseCase,
-            GetAllMotorcyclesPageableUseCase getAllMotorcyclesPageableUseCase)
+            GetAllMotorcyclesPageableUseCase getAllMotorcyclesPageableUseCase,
+            UpdateMotorcycleUseCase updateMotorcycleUseCase)
         {
             _createMotorcycleUseCase = createMotorcycleUseCase;
             _getAllMotorcyclesPageableUseCase = getAllMotorcyclesPageableUseCase;
+            _updateMotorcycleUseCase = updateMotorcycleUseCase;
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveMotorcycle([FromBody] CreateMotorcycleDto dto)
+        public async Task<IActionResult> SaveMotorcycle([FromBody] MotorcycleDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -59,6 +64,27 @@ namespace MottuChallenge.API.Controllers
             );
 
             return Ok(response);
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(void), 204)]
+        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(string), 404)]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] MotorcycleDto dto)
+        {
+            try
+            {
+                var motorcycle = await _updateMotorcycleUseCase.UpdateMotorcycleAsync(id, dto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

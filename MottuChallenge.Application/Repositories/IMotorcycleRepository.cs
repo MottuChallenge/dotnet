@@ -13,5 +13,6 @@ namespace MottuChallenge.Application.Repositories
             MessageQuery? filter = null,
             CancellationToken ct = default
         );
+        Task<Motorcycle> GetByIdAsync(Guid id);
     }
 }
