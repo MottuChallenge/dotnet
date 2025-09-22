@@ -13,7 +13,7 @@ namespace MottuChallenge.Domain.Entities
         public EngineType EngineType { get; private set; }
         public string Plate { get; private set; }
         public DateTime LastRevisionDate { get; private set; }
-        public Guid SpotId { get; private set; }
+        public Guid? SpotId { get; private set; }
         public Spot Spot { get; private set; }
 
         public Motorcycle(string model, EngineType engineType, string plate, DateTime lastRevisionDate)
@@ -49,12 +49,12 @@ namespace MottuChallenge.Domain.Entities
 
             if (char.IsLetter(plate, 4))
             {
-                var padraoMercosul = new Regex("[a-zA-Z]{3}[0-9]{1}[a-zA-Z]{1}[0-9]{2}");
+                var padraoMercosul = new Regex("[a-zA-Z]{3}[0-9]{1} [a-zA-Z]{1}[0-9]{2}");
                 if (!padraoMercosul.IsMatch(plate)) throw new PlateException("Placa inválida");
             }
             else
             {
-                var padraoNormal = new Regex("[a-zA-Z]{3}[0-9]{4}");
+                var padraoNormal = new Regex("[a-zA-Z]{3}-[0-9]{4}");
                 if (!padraoNormal.IsMatch(plate)) throw new PlateException("Placa inválida!");
             }
         }
