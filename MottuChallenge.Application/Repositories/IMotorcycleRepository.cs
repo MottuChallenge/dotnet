@@ -14,5 +14,6 @@ namespace MottuChallenge.Application.Repositories
             CancellationToken ct = default
         );
         Task<Motorcycle> GetByIdAsync(Guid id);
+        Task DeleteAsync(Motorcycle motorcycle);
     }
 }

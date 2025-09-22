@@ -14,16 +14,19 @@ namespace MottuChallenge.API.Controllers
         private readonly CreateMotorcycleUseCase _createMotorcycleUseCase;
         private readonly GetAllMotorcyclesPageableUseCase _getAllMotorcyclesPageableUseCase;
         private readonly UpdateMotorcycleUseCase _updateMotorcycleUseCase;
+        private readonly DeleteMotorcycleUseCase _deleteMotorcycleUseCase;
 
 
         public MotorcyclesController(
             CreateMotorcycleUseCase createMotorcycleUseCase,
             GetAllMotorcyclesPageableUseCase getAllMotorcyclesPageableUseCase,
-            UpdateMotorcycleUseCase updateMotorcycleUseCase)
+            UpdateMotorcycleUseCase updateMotorcycleUseCase,
+            DeleteMotorcycleUseCase deleteMotorcycleUseCase)
         {
             _createMotorcycleUseCase = createMotorcycleUseCase;
             _getAllMotorcyclesPageableUseCase = getAllMotorcyclesPageableUseCase;
             _updateMotorcycleUseCase = updateMotorcycleUseCase;
+            _deleteMotorcycleUseCase = deleteMotorcycleUseCase;
         }
 
         [HttpPost]
@@ -76,6 +79,27 @@ namespace MottuChallenge.API.Controllers
             try
             {
                 var motorcycle = await _updateMotorcycleUseCase.UpdateMotorcycleAsync(id, dto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(void), 204)]
+        [ProducesResponseType(typeof(string), 404)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> DeleteMotorcycle([FromRoute] Guid id)
+        {
+            try
+            {
+                await _deleteMotorcycleUseCase.DeleteMotorcycleAsync(id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
