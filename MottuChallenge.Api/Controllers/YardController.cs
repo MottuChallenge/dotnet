@@ -15,13 +15,16 @@ namespace MottuChallenge.Api.Controllers
         private readonly GetAllYardsUseCase _getAllYardsUseCase;
         private readonly GetYardByIdUseCase _getYardByIdUseCase;
         private readonly UpdateYardUseCase _updateYardUseCase;
+        private readonly DeleteYardUseCase _deleteYardUseCase;
 
-        public YardController(CreateYardUseCase createYardUseCase, GetAllYardsUseCase getAllYardsUseCase, GetYardByIdUseCase getYardByIdUseCase, UpdateYardUseCase updateYardUseCase)
+
+        public YardController(CreateYardUseCase createYardUseCase, GetAllYardsUseCase getAllYardsUseCase, GetYardByIdUseCase getYardByIdUseCase, UpdateYardUseCase updateYardUseCase, DeleteYardUseCase deleteYardUseCase)
         {
             _createYardUseCase = createYardUseCase;
             _getAllYardsUseCase = getAllYardsUseCase;
             _getYardByIdUseCase = getYardByIdUseCase;
             _updateYardUseCase = updateYardUseCase;
+            _deleteYardUseCase = deleteYardUseCase;
         }
 
         [HttpPost]
@@ -87,6 +90,27 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 await _updateYardUseCase.UpdateYardNameAsync(id, dto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(void), 204)]
+        [ProducesResponseType(typeof(string), 404)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> DeleteYard([FromRoute] Guid id)
+        {
+            try
+            {
+                await _deleteYardUseCase.DeleteYardAsync(id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)

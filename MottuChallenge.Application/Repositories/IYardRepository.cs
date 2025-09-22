@@ -12,5 +12,7 @@ namespace MottuChallenge.Application.Repositories
 
         Task UpdateAsync(Yard yard);
 
+        Task DeleteAsync(Yard yard);
+        
     }
 }
