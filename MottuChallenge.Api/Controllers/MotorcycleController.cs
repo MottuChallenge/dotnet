@@ -39,6 +39,7 @@ namespace MottuChallenge.API.Controllers
 
 
         [HttpGet]
+        [ProducesResponseType(typeof(PaginatedResult<MotorcycleResponseDto>), 200)]
         public async Task<IActionResult> GetAllMotorcyclesPaginated([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             var pageRequest = new PageRequest();
