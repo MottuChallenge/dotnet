@@ -52,5 +52,11 @@ namespace MottuChallenge.Infrastructure.Repositories
             return sector;
 
         }
+
+        public async Task DeleteAsync(Sector sector)
+        {
+            _context.Sectors.Remove(sector);
+            await _context.SaveChangesAsync();
+        }
     }
 }

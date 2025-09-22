@@ -31,5 +31,17 @@ namespace MottuChallenge.Infrastructure.Repositories
                 .Include(y => y.Points)
                 .ToListAsync();
         }
+
+        public async Task UpdateAsync(Yard yard)
+        {
+            _context.Yards.Update(yard);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Yard yard)
+        {
+            _context.Yards.Remove(yard);
+            await _context.SaveChangesAsync();
+        }
     }
 }

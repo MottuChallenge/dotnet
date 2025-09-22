@@ -16,6 +16,12 @@ namespace MottuChallenge.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task DeleteAsync(Motorcycle motorcycle)
+        {
+            _context.Motorcycles.Remove(motorcycle);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<PaginatedResult<MotorcycleResponseDto>> GetAllMotorciclePaginated(
                  PageRequest page,
                  MessageQuery? filter = null,
@@ -52,6 +58,10 @@ namespace MottuChallenge.Infrastructure.Repositories
             return new PaginatedResult<MotorcycleResponseDto>(items, totalItems, page.Page, page.PageSize);
         }
 
+        public async Task<Motorcycle> GetByIdAsync(Guid id)
+        {
+            return await _context.Motorcycles.FindAsync(id);
+        }
 
         public async Task<Motorcycle> SaveMotorcycleAsync(Motorcycle motorcycle)
         {
