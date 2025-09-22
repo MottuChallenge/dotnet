@@ -21,10 +21,8 @@ namespace MottuChallenge.Application.UseCases.Yards
         {
             var address = await _findAddressByCepUseCase.FindAddressByCep(dto.Cep, dto.Number);
 
-            var yard = new Yard(dto.Name, address.Id)
-            {
-                Address = address
-            };
+            var yard = new Yard(dto.Name);
+            yard.SetAddress(address);
 
             foreach (var pointDto in dto.Points)
                 yard.AddPoint(new PolygonPoint(pointDto.PointOrder, pointDto.X, pointDto.Y));
