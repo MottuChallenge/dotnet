@@ -10,5 +10,7 @@ namespace MottuChallenge.Application.Repositories
 
         Task<List<Yard>> GetAllYardsAsync();
 
+        Task UpdateAsync(Yard yard);
+
     }
 }
