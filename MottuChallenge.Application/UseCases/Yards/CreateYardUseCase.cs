@@ -1,5 +1,4 @@
 ﻿using MottuChallenge.Application.DTOs.Request;
-using MottuChallenge.Application.Interfaces;
 using MottuChallenge.Application.Repositories;
 using MottuChallenge.Application.UseCases.Addresses;
 using MottuChallenge.Domain.Entities;

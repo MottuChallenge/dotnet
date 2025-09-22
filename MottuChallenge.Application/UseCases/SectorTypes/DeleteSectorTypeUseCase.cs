@@ -1,5 +1,5 @@
 ﻿using MottuChallenge.Application.Interfaces;
-using MottuChallenge.Infrastructure.Repositories;
+using MottuChallenge.Application.Repositories;
 
 namespace MottuChallenge.Application.UseCases.SectorTypes
 {
@@ -14,7 +14,7 @@ namespace MottuChallenge.Application.UseCases.SectorTypes
 
         public async Task DeleteSectorTypeById(Guid id)
         {
-            var sectorType = await _repository.FindAsync(id);
+            var sectorType = await _repository.FindByIdAsync(id);
             if (sectorType == null)
                 throw new KeyNotFoundException($"SectorType with id {id} not found.");
 

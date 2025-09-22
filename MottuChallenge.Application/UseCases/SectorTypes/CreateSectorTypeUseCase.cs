@@ -1,6 +1,6 @@
 ﻿using MottuChallenge.Application.DTOs.Request;
+using MottuChallenge.Application.Repositories;
 using MottuChallenge.Domain.Entities;
-using MottuChallenge.Infrastructure.Repositories;
 
 namespace MottuChallenge.Application.UseCases.SectorTypes
 {
