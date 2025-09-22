@@ -2,8 +2,6 @@
 using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Repositories;
 using MottuChallenge.Domain.Entities;
-using MottuChallenge.Domain.Enums;
-using System.Reflection;
 namespace MottuChallenge.Application.UseCases.Motorcycles
 {
     public class CreateMotorcycleUseCase
@@ -17,16 +15,16 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
             _sectorRepository = sectorRepository;
         }
 
-        public async Task<MotorcycleResponseDto> SaveMotorcycleAsync(CreateMotorcycleDto motorcycleDto)
+        public async Task<MotorcycleResponseDto> SaveMotorcycleAsync(MotorcycleDto motorcycleDto)
         {
             var motorcycle = new Motorcycle(motorcycleDto.Model, motorcycleDto.EngineType, motorcycleDto.Plate, motorcycleDto.LastRevisionDate);
             await _motorcycleRepository.SaveMotorcycleAsync(motorcycle);
 
-            if (motorcycleDto.SpotId != Guid.Empty)
+            if (motorcycleDto.SpotId.HasValue && motorcycleDto.SpotId.Value != Guid.Empty)
             {
-                var sector = await _sectorRepository.GetSectorBySpotId(motorcycleDto.SpotId);
+                var sector = await _sectorRepository.GetSectorBySpotId(motorcycleDto.SpotId.Value);
             
-                sector.AssignMotorcycleToSpot(motorcycleDto.SpotId, motorcycle);
+                sector.AssignMotorcycleToSpot(motorcycleDto.SpotId.Value, motorcycle);
                 await _sectorRepository.UpdateAsync(sector);
                 await _motorcycleRepository.UpdateAsync(motorcycle);
             }
