@@ -16,7 +16,7 @@ namespace MottuChallenge.Domain.Entities
         public Guid SpotId { get; private set; }
         public Spot Spot { get; private set; }
 
-        public Motorcycle(string model, EngineType engineType, string plate, DateTime lastRevisionDate, Guid spotId)
+        public Motorcycle(string model, EngineType engineType, string plate, DateTime lastRevisionDate)
         {
             ValidatePlate(plate);
             ValidateEngineType(engineType);
@@ -26,10 +26,17 @@ namespace MottuChallenge.Domain.Entities
             this.EngineType = engineType;
             this.Plate = plate;
             this.LastRevisionDate = lastRevisionDate;
-            this.SpotId = spotId;
         }
 
         private Motorcycle() { }
+
+        public void SetSpot(Spot spot)
+        {
+            if (spot == null)
+                throw new DomainValidationException("Spot cannot be null", nameof(spot), nameof(Motorcycle));
+            Spot = spot;
+            SpotId = spot.SpotId;
+        }
 
         private void ValidatePlate(string plate)
         {

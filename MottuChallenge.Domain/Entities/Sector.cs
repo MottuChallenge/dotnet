@@ -52,6 +52,15 @@ namespace MottuChallenge.Domain.Entities
             _points.AddRange(points);
         }
 
+        public void AssignMotorcycleToSpot(Guid spotId, Motorcycle motorcycle)
+        {
+            var spot = _spots.FirstOrDefault(s => s.SpotId == spotId);
+            if (spot == null)
+                throw new KeyNotFoundException("Spot not found in this sector.");
+
+            spot.AssignMotorcycle(motorcycle);
+        }
+
         public void ValidateInsideYard()
         {
             bool isInside = _points.All(p => GeometryHelper.IsPointInsidePolygon(p.X, p.Y, Yard.Points.ToList()));

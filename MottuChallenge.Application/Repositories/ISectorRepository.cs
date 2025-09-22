@@ -6,10 +6,10 @@ namespace MottuChallenge.Application.Repositories
     {
 
         Task<Sector> SaveSectorAsync(Sector sector);
-
         Task<List<Sector>> GetSectorsByYardIdAsync(Guid yardId);
-
         Task<Sector> GetSectorByIdAsync(Guid sectorId);
         Task<List<Sector>> GetAllSectorsAsync();
+        Task<Sector> GetSectorBySpotId(Guid spotId);
+        Task<Sector> UpdateAsync(Sector sector);
     }
 }
