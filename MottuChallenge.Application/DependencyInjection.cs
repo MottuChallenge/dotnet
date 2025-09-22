@@ -22,7 +22,6 @@ namespace MottuChallenge.Application
             services.AddScoped<CreateYardUseCase>();
             services.AddScoped<GetAllYardsUseCase>();
             services.AddScoped<GetYardByIdUseCase>();
-            services.AddScoped<GetYardEntityByIdUseCase>();
             services.AddScoped<GetSectorTypeByIdUseCase>();
             services.AddScoped<CreateMotorcycleUseCase>();
             services.AddScoped<GetAllMotorcyclesPageableUseCase>();
