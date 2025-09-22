@@ -2,7 +2,7 @@
 
 namespace MottuChallenge.Application.Helpers
 {
-    internal static class GeometryHelper
+    public static class GeometryHelper
     {
         public static bool IsPointInsidePolygon(double x, double y, List<PolygonPoint> polygon)
         {
