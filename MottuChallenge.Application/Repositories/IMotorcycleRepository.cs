@@ -1,4 +1,6 @@
-﻿using MottuChallenge.Domain.Entities;
+﻿using MottuChallenge.Application.DTOs.Response;
+using MottuChallenge.Application.Pagination;
+using MottuChallenge.Domain.Entities;
 
 namespace MottuChallenge.Application.Repositories
 {
@@ -6,5 +8,10 @@ namespace MottuChallenge.Application.Repositories
     {
         Task<Motorcycle> SaveMotorcycleAsync(Motorcycle motorcycle);
         Task<Motorcycle> UpdateAsync(Motorcycle motorcycle);
+        Task<PaginatedResult<MotorcycleResponseDto>> GetAllMotorciclePaginated(
+            PageRequest page,
+            MessageQuery? filter = null,
+            CancellationToken ct = default
+        );
     }
 }

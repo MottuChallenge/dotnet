@@ -1,4 +1,7 @@
-﻿using MottuChallenge.Application.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using MottuChallenge.Application.DTOs.Response;
+using MottuChallenge.Application.Pagination;
+using MottuChallenge.Application.Repositories;
 using MottuChallenge.Domain.Entities;
 using MottuChallenge.Infrastructure.Persistence;
 
@@ -13,6 +16,43 @@ namespace MottuChallenge.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<PaginatedResult<MotorcycleResponseDto>> GetAllMotorciclePaginated(
+                 PageRequest page,
+                 MessageQuery? filter = null,
+                 CancellationToken ct = default
+        )
+        {
+            page.EnsureValid();
+
+            var query = _context.Motorcycles.AsNoTracking();
+
+            if (filter != null)
+            {
+                if (!string.IsNullOrEmpty(filter.Plate))
+                    query = query.Where(m => m.Plate.Contains(filter.Plate));
+            }
+
+            var totalItems = await query.CountAsync(ct);
+
+            var motorcycles = await query
+                .Skip((page.Page - 1) * page.PageSize)
+                .Take(page.PageSize)
+                .ToListAsync(ct);
+
+            var items = motorcycles.Select(m => new MotorcycleResponseDto
+            {
+                Id = m.Id,
+                Model = m.Model,
+                EngineType = m.EngineType,
+                Plate = m.Plate,
+                LastRevisionDate = m.LastRevisionDate,
+                SpotId = m.SpotId
+            }).ToList();
+
+            return new PaginatedResult<MotorcycleResponseDto>(items, totalItems, page.Page, page.PageSize);
+        }
+
+
         public async Task<Motorcycle> SaveMotorcycleAsync(Motorcycle motorcycle)
         {
             await _context.Motorcycles.AddAsync(motorcycle);
@@ -26,5 +66,7 @@ namespace MottuChallenge.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return motorcycle;
         }
+
+
     }
 }
