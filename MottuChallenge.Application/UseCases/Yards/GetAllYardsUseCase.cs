@@ -23,7 +23,7 @@ namespace MottuChallenge.Application.UseCases.Yards
             foreach (var yard in yards)
             {
                 var address = await _findAddressByIdUseCase.GetAddressByIdAsync(yard.AddressId);
-                yard.Address = address;
+                yard.SetAddress(address);
 
                 result.Add(new YardResponseDto
                 {

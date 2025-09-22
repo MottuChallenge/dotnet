@@ -22,7 +22,7 @@ namespace MottuChallenge.Application.UseCases.Yards
             var yard = await _yardRepository.GetYardByIdAsync(id);
             ValidateYardExists(yard);
             var address = await _findAddressByIdUseCase.GetAddressByIdAsync(yard.AddressId);
-            yard.Address = address;
+            yard.SetAddress(address);
 
             return new YardResponseDto
             {
