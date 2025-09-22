@@ -37,5 +37,20 @@ namespace MottuChallenge.Infrastructure.Repositories
                                  .Include(s => s.Spots)
                                  .ToListAsync();
         }
+
+        public async Task<Sector> GetSectorBySpotId(Guid spotId)
+        {
+            return await _context.Sectors
+                                 .Include(s => s.Spots)
+                                 .FirstOrDefaultAsync(s => s.Spots.Any(sp => sp.SpotId == spotId));
+        }
+
+        public async Task<Sector> UpdateAsync(Sector sector)
+        {
+            _context.Sectors.Update(sector);
+            await _context.SaveChangesAsync();
+            return sector;
+
+        }
     }
 }
