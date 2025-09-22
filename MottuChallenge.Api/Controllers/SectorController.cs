@@ -2,6 +2,7 @@
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.UseCases.Sectors;
+using MottuChallenge.Domain.Exceptions;
 
 namespace MottuChallenge.Api.Controllers
 {
@@ -22,10 +23,23 @@ namespace MottuChallenge.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(void), 201)]
+        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Post([FromBody] SectorCreateDto sectorCreateDto)
         {
-            await _createSectorUseCase.SaveSector(sectorCreateDto);
-            return Created();
+            try
+            {
+                await _createSectorUseCase.SaveSector(sectorCreateDto);
+                return Created();
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            } catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+
         }
 
        
@@ -37,13 +51,22 @@ namespace MottuChallenge.Api.Controllers
             return Ok(sectors);
         }
 
-      
+
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(SectorResponseDto), 200)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var sector = await _getSectorByIdUseCase.FindSectorById(id);
-            return Ok(sector);
+            try
+            {
+                var sector = await _getSectorByIdUseCase.FindSectorById(id);
+                return Ok(sector);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+
+            }
         }
     }
 }

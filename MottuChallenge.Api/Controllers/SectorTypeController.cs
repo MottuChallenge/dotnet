@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.UseCases.SectorTypes;
+using MottuChallenge.Domain.Exceptions;
 
 namespace MottuChallenge.Api.Controllers
 {
@@ -24,10 +25,18 @@ namespace MottuChallenge.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(void), 201)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody] SectorTypeDto sectorTypeCreateDto)
         {
-            await _createSectorTypeUseCase.SaveSectorType(sectorTypeCreateDto);
-            return Created();
+            try
+            {
+                await _createSectorTypeUseCase.SaveSectorType(sectorTypeCreateDto);
+                return Created();
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }      
         }
 
         [HttpGet]
@@ -40,18 +49,33 @@ namespace MottuChallenge.Api.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Put([FromRoute] Guid id, [FromBody] SectorTypeDto sectorTypeCreateDto)
         {
-            var sectorType = await _updateSectorTypeUseCase.UpdateSectorTypeById(sectorTypeCreateDto, id);
-            return Ok(sectorType);
+            try
+            {
+                var sectorType = await _updateSectorTypeUseCase.UpdateSectorTypeById(sectorTypeCreateDto, id);
+                return Ok(sectorType);
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+
+            }
         }
 
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(void), 204)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            await _deleteSectorTypeUseCase.DeleteSectorTypeById(id);
-            return NoContent();
+           await _deleteSectorTypeUseCase.DeleteSectorTypeById(id);
+           return NoContent();
         }
     }
 }

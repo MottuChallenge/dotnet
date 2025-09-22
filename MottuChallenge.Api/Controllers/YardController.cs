@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.UseCases.Yards;
+using MottuChallenge.Domain.Exceptions;
 
 namespace MottuChallenge.Api.Controllers
 {
@@ -21,10 +22,19 @@ namespace MottuChallenge.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(void), 201)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody] CreateYardDto createYardDto)
         {
-            await _createYardUseCase.SaveYard(createYardDto);
-            return Created();
+            try
+            {
+                await _createYardUseCase.SaveYard(createYardDto);
+                return Created();
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+
+            }
         }
 
         [HttpGet]
@@ -37,10 +47,18 @@ namespace MottuChallenge.Api.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(void), 200)]
-        public async Task<IActionResult> getById([FromRoute] Guid id)
+        [ProducesResponseType(typeof(string), 404)]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var yard = await _getYardByIdUseCase.FindYardById(id);
-            return Ok(yard);
+            try
+            {
+                var yard = await _getYardByIdUseCase.FindYardById(id);
+                return Ok(yard);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
        
     }
