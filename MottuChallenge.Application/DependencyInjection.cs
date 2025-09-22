@@ -28,6 +28,9 @@ namespace MottuChallenge.Application
             services.AddScoped<UpdateSectorUseCase>();
             services.AddScoped<UpdateYardUseCase>();
             services.AddScoped<UpdateMotorcycleUseCase>();
+            services.AddScoped<DeleteSectorUseCase>();
+            services.AddScoped<DeleteYardUseCase>();
+            services.AddScoped<DeleteMotorcycleUseCase>();
 
             return services;
         }
