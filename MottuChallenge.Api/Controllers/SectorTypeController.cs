@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MottuChallenge.Application.DTOs.Request;
+using MottuChallenge.Application.DTOs.Validations;
 using MottuChallenge.Application.UseCases.SectorTypes;
 using MottuChallenge.Domain.Exceptions;
 
@@ -28,6 +30,19 @@ namespace MottuChallenge.Api.Controllers
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody] SectorTypeDto sectorTypeCreateDto)
         {
+            var validator = new SectorTypeDtoValidator();
+            var result = validator.Validate(sectorTypeCreateDto);
+
+            if (!result.IsValid)
+            {
+                var modelState = new ModelStateDictionary();
+                foreach (var failure in result.Errors)
+                {
+                    modelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
+                }
+
+                return ValidationProblem(modelState);
+            }
             try
             {
                 await _createSectorTypeUseCase.SaveSectorType(sectorTypeCreateDto);
