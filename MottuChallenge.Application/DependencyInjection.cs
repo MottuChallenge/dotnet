@@ -11,7 +11,6 @@ namespace MottuChallenge.Application
     {
         public static IServiceCollection AddUseCases(this IServiceCollection services)
         {
-            services.AddScoped<FindAddressByCepUseCase>();
             services.AddScoped<CreateSectorUseCase>();
             services.AddScoped<GetAllSectorsUseCase>();
             services.AddScoped<GetSectorByIdUseCase>();
