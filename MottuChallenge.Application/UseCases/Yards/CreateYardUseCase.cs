@@ -1,6 +1,6 @@
 ﻿using MottuChallenge.Application.DTOs.Request;
+using MottuChallenge.Application.Interfaces;
 using MottuChallenge.Application.Repositories;
-using MottuChallenge.Application.UseCases.Addresses;
 using MottuChallenge.Domain.Entities;
 using MottuChallenge.Domain.ValueObjects;
 
@@ -9,26 +9,26 @@ namespace MottuChallenge.Application.UseCases.Yards
     public class CreateYardUseCase
     {
         private readonly IYardRepository _yardRepository;
-        private readonly FindAddressByCepUseCase _findAddressByCepUseCase;
+        private readonly IAddressProvider _addressProvider;
 
-        public CreateYardUseCase(IYardRepository yardRepository, FindAddressByCepUseCase findAddressByCepUseCase)
+        public CreateYardUseCase(IYardRepository yardRepository, IAddressProvider addressProvider)
         {
             _yardRepository = yardRepository;
-            _findAddressByCepUseCase = findAddressByCepUseCase;
+            _addressProvider = addressProvider;
         }
 
         public async Task<Yard> SaveYard(CreateYardDto dto)
         {
-            var address = await _findAddressByCepUseCase.FindAddressByCep(dto.Cep, dto.Number);
+            var address = await _addressProvider.GetAddressByCepAsync(dto.Cep, dto.Number);
+            if (address is null)
+                throw new ArgumentException($"Endereço não encontrado para o CEP {dto.Cep}");
 
             var yard = new Yard(dto.Name);
             yard.SetAddress(address);
 
-            foreach (var pointDto in dto.Points)
-                yard.AddPoint(new PolygonPoint(pointDto.PointOrder, pointDto.X, pointDto.Y));
+            yard.AddPoints(dto.Points.Select(p => new PolygonPoint(p.PointOrder, p.X, p.Y)));
 
-            await _yardRepository.SaveYardAsync(yard);
-            return yard;
+            return await _yardRepository.SaveYardAsync(yard);
         }
     }
 }

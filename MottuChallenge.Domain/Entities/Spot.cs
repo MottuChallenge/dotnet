@@ -26,7 +26,7 @@ namespace MottuChallenge.Domain.Entities
             this.Status = SpotStatus.FREE;
 
         }
-        public Spot() { }
+        private Spot() { }
 
         public void SetSector(Sector sector)
         {
@@ -40,6 +40,7 @@ namespace MottuChallenge.Domain.Entities
         {
             Motorcycle = motorcycle;
             MotorcycleId = motorcycle.Id;
+            motorcycle.SetSpot(this);
             Status = SpotStatus.OCCUPIED;
         }
 

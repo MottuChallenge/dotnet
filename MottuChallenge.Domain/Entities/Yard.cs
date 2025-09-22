@@ -39,9 +39,11 @@ namespace MottuChallenge.Domain.Entities
             _sectors.Add(sector);
         }
 
-        public void AddPoint(PolygonPoint point)
+        public void AddPoints(IEnumerable<PolygonPoint> points)
         {
-            _points.Add(point);
+            if (points.Count() < 3)
+                throw new DomainValidationException("O setor deve ter pelo menos 3 pontos", nameof(points), nameof(Sector));
+            _points.AddRange(points);
         }
     }
 }

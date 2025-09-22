@@ -1,50 +1,51 @@
 ﻿using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.Repositories;
-using MottuChallenge.Application.UseCases.SectorTypes;
 using MottuChallenge.Application.UseCases.Spots;
-using MottuChallenge.Application.UseCases.Yards;
 using MottuChallenge.Domain.Entities;
 using MottuChallenge.Domain.ValueObjects;
 
-namespace MottuChallenge.Application.UseCases.Sectors
+public class CreateSectorUseCase
 {
-    public class CreateSectorUseCase
+    private readonly ISectorRepository _sectorRepository;
+    private readonly IYardRepository _yardRepository;
+    private readonly ISectorTypeRepository _sectorTypeRepository;
+    private readonly GenerateSpotsUseCase _generateSpotsUseCase;
+
+    public CreateSectorUseCase(
+        ISectorRepository sectorRepository,
+        IYardRepository yardRepository,
+        ISectorTypeRepository sectorTypeRepository,
+        GenerateSpotsUseCase generateSpotsUseCase)
     {
-        private readonly ISectorRepository _sectorRepository;
-        private readonly GetYardEntityByIdUseCase _getYardEntityByIdUseCase;
-        private readonly GenerateSpotsUseCase _generateSpotsUseCase;
-        private readonly GetSectorTypeByIdUseCase _getSectorTypeByIdUseCase;
+        _sectorRepository = sectorRepository;
+        _yardRepository = yardRepository;
+        _sectorTypeRepository = sectorTypeRepository;
+        _generateSpotsUseCase = generateSpotsUseCase;
+    }
 
-        public CreateSectorUseCase(ISectorRepository sectorRepository, GetYardEntityByIdUseCase getYardEntityByIdUseCase, GenerateSpotsUseCase generateSpotsUseCase, GetSectorTypeByIdUseCase getSectorTypeByIdUseCase)
-        {
-            _sectorRepository = sectorRepository;
-            _getYardEntityByIdUseCase = getYardEntityByIdUseCase;
-            _generateSpotsUseCase = generateSpotsUseCase;
-            _getSectorTypeByIdUseCase = getSectorTypeByIdUseCase;
-        }
+    public async Task<Sector> SaveSector(SectorCreateDto sectorCreateDto)
+    {
+        var sector = new Sector();
 
-        public async Task<Sector> SaveSector(SectorCreateDto sectorCreateDto)
-        {
-            var sector = new Sector();
+        var yard = await _yardRepository.GetYardByIdAsync(sectorCreateDto.YardId)
+                  ?? throw new KeyNotFoundException("Yard not found");
 
-            var yard = await _getYardEntityByIdUseCase.FindYardById(sectorCreateDto.YardId);
+        var sectorType = await _sectorTypeRepository.FindByIdAsync(sectorCreateDto.SectorTypeId)
+                        ?? throw new KeyNotFoundException("SectorType not found");
 
-            var sectorType = await _getSectorTypeByIdUseCase.FindSectorTypeById(sectorCreateDto.SectorTypeId);
+        sector.AddYard(yard);
+        sector.AddSectorType(sectorType);
 
-            sector.AddYard(yard);
-            sector.AddSectorType(sectorType);
-            sector.ValidateInsideYard();
-            sector.AddPoints(sectorCreateDto.Points.Select(p => new PolygonPoint(p.PointOrder, p.X, p.Y)));
+        sector.AddPoints(sectorCreateDto.Points.Select(p => new PolygonPoint(p.PointOrder, p.X, p.Y)));
 
-            var existingSectors = await _sectorRepository.GetSectorsByYardIdAsync(yard.Id);
-            sector.ValidateOverlap(existingSectors);
+        sector.ValidateInsideYard();
 
-            var spots = _generateSpotsUseCase.GenerateSpot(sector, 2, 2);
+        var existingSectors = await _sectorRepository.GetSectorsByYardIdAsync(yard.Id);
+        sector.ValidateOverlap(existingSectors);
 
-            sector.AddSpots(spots);
+        var spots = _generateSpotsUseCase.GenerateSpot(sector, 2, 2);
+        sector.AddSpots(spots);
 
-            return await _sectorRepository.SaveSectorAsync(sector);
-        }
-
+        return await _sectorRepository.SaveSectorAsync(sector);
     }
 }
