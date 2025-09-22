@@ -1,5 +1,4 @@
 ﻿using MottuChallenge.Application.Repositories;
-using MottuChallenge.Application.UseCases.Addresses;
 using MottuChallenge.Domain.Entities;
 
 namespace MottuChallenge.Application.UseCases.Yards
