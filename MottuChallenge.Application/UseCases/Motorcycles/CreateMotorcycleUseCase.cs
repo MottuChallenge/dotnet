@@ -23,6 +23,8 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
             if (motorcycleDto.SpotId.HasValue && motorcycleDto.SpotId.Value != Guid.Empty)
             {
                 var sector = await _sectorRepository.GetSectorBySpotId(motorcycleDto.SpotId.Value);
+
+                ValidateIfExistMotorcycleInsideSpot(sector, motorcycleDto.SpotId.Value);
             
                 sector.AssignMotorcycleToSpot(motorcycleDto.SpotId.Value, motorcycle);
                 await _sectorRepository.UpdateAsync(sector);
@@ -39,6 +41,21 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
                 SpotId = motorcycle.SpotId
             }
             ;
+        }
+
+        private void ValidateIfExistMotorcycleInsideSpot(Sector sector, Guid spotId)
+        {
+            var spot = sector.Spots.FirstOrDefault(spot => spot.SpotId == spotId);
+            if (spot == null)
+            {
+                throw new KeyNotFoundException("Spot not found");
+            }
+
+            if(spot.Status.Equals(Domain.Enums.SpotStatus.OCCUPIED))
+            {
+                throw new ArgumentException("This Spot is already occupied");
+            }
+
         }
     }
 }

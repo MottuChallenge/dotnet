@@ -32,12 +32,22 @@ namespace MottuChallenge.API.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveMotorcycle([FromBody] MotorcycleDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            var motorcycle = await _createMotorcycleUseCase.SaveMotorcycleAsync(dto);
+                var motorcycle = await _createMotorcycleUseCase.SaveMotorcycleAsync(dto);
 
-            return Ok(motorcycle);
+                return Ok(motorcycle);
+            } catch(KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            } catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            
         }
 
 
