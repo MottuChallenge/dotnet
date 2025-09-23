@@ -5,10 +5,12 @@ namespace MottuChallenge.Application.UseCases.Sectors
     public class DeleteSectorUseCase
     {
         private readonly ISectorRepository _sectorRepository;
+        private readonly IMotorcycleRepository _motorcicleRepository;
 
-        public DeleteSectorUseCase(ISectorRepository sectorRepository)
+        public DeleteSectorUseCase(ISectorRepository sectorRepository, IMotorcycleRepository motorcycleRepository)
         {
             _sectorRepository = sectorRepository;
+            _motorcicleRepository = motorcycleRepository;
         }
 
         public async Task DeleteSectorAsync(Guid sectorId)
@@ -17,10 +19,16 @@ namespace MottuChallenge.Application.UseCases.Sectors
             if (sector == null)
                 throw new KeyNotFoundException($"Sector with ID {sectorId} not found.");
 
-            // Exemplo de regra de negócio: não deletar se tiver spots ocupados
-            // if (sector.Spots.Any(s => s.Motorcycle != null))
-            //     throw new DomainValidationException("Cannot delete sector with motorcycles assigned.");
-
+            foreach (var spot in sector.Spots)
+            {
+                if(spot.MotorcycleId.HasValue && spot.MotorcycleId.Value != null)
+                {
+                    var motorcycle = await _motorcicleRepository.GetByIdAsync(spot.MotorcycleId.Value);
+                    motorcycle.RemoveSpot();
+                    spot.RemoveMotorcycle();
+                    await _motorcicleRepository.UpdateAsync(motorcycle);
+                }
+            }
             await _sectorRepository.DeleteAsync(sector);
         }
     }
