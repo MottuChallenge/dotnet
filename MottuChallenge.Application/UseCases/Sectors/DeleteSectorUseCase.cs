@@ -1,5 +1,4 @@
 ﻿using MottuChallenge.Application.Repositories;
-using MottuChallenge.Domain.Exceptions;
 
 namespace MottuChallenge.Application.UseCases.Sectors
 {
@@ -26,4 +25,3 @@ namespace MottuChallenge.Application.UseCases.Sectors
         }
     }
 }
-s
