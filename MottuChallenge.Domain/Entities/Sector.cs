@@ -63,7 +63,8 @@ namespace MottuChallenge.Domain.Entities
 
         public void ValidateInsideYard()
         {
-            bool isInside = _points.All(p => GeometryHelper.IsPointInsidePolygon(p.X, p.Y, Yard.Points.ToList()));
+            var points = Yard.Points.OrderBy(p => p.PointOrder).ToList();
+            bool isInside = _points.All(p => GeometryHelper.IsPointInsidePolygon(p.X, p.Y, points));
             if (!isInside)
                 throw new DomainValidationException("O setor deve estar completamente dentro do pátio", nameof(_points), nameof(Sector));
         }
