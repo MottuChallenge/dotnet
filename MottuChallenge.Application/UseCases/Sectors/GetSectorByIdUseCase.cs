@@ -1,6 +1,7 @@
 ﻿using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Helpers;
 using MottuChallenge.Application.Repositories;
+using MottuChallenge.Domain.Entities;
 
 namespace MottuChallenge.Application.UseCases.Sectors
 {
@@ -16,6 +17,7 @@ namespace MottuChallenge.Application.UseCases.Sectors
         public async Task<SectorResponseDto> FindSectorById(Guid sectorId)
         {
             var sector = await _sectorRepository.GetSectorByIdAsync(sectorId);
+            ValidateSectorExists(sector);
 
             return new SectorResponseDto
             {
@@ -25,6 +27,14 @@ namespace MottuChallenge.Application.UseCases.Sectors
                 Points = PolygonPointsMapping.CreateListOfPointResponseDto(sector.Points),
                 Spots = sector.Spots.Select(s => new SpotResponseDto { SpotId = s.SpotId, SectorId = s.SectorId, Status = s.Status, MotorcycleId = s.MotorcycleId, X = s.X, Y = s.Y }).ToList()
             };
+        }
+
+        private void ValidateSectorExists(Sector sector)
+        {
+            if (sector == null)
+            {
+                throw new KeyNotFoundException("sector not Found");
+            }
         }
     }
 }
