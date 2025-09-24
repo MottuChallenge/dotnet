@@ -1,6 +1,6 @@
 ﻿namespace MottuChallenge.Application.Pagination
 {
-    public class MessageQuery
+    public class MotorcycleQuery
     {
         public string? Plate { get; init; }
        
