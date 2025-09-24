@@ -1,3 +1,4 @@
+using Microsoft.OpenApi.Models;
 using MottuChallenge.Application;
 using MottuChallenge.Infrastructure;
 
@@ -19,11 +20,17 @@ namespace MottuChallenge.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new()
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "MottuChallenge API",
+                    Title = "Mottu Challenge API",
                     Version = "v1",
-                    Description = "API para gerenciamento de setores e pátios"
+                    Description = "API para gerenciamento de motocicletas, pátios e setores.",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Pedro Henrique",
+                        Email = "rm559064@fiap.com.br",
+                        Url = new Uri("https://github.com/Pedro-Henrique3216")
+                    }
                 });
             });
 
