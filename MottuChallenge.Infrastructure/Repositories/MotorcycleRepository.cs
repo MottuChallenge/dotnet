@@ -24,7 +24,7 @@ namespace MottuChallenge.Infrastructure.Repositories
 
         public async Task<PaginatedResult<MotorcycleResponseDto>> GetAllMotorciclePaginated(
                  PageRequest page,
-                 MessageQuery? filter = null,
+                 MotorcycleQuery? filter = null,
                  CancellationToken ct = default
         )
         {
@@ -77,6 +77,19 @@ namespace MottuChallenge.Infrastructure.Repositories
             return motorcycle;
         }
 
+        public async Task RemoveMotorcyclesByYardId(Guid yardId)
+        {
+            var motorcycles = await _context.Motorcycles
+                .Where(m => m.Spot.Sector.YardId == yardId)
+                .ToListAsync();
+
+            if (motorcycles.Any())
+            {
+                _context.Motorcycles.RemoveRange(motorcycles);
+
+                await _context.SaveChangesAsync();
+            }
+        }
 
     }
 }

@@ -10,10 +10,12 @@ namespace MottuChallenge.Application.Repositories
         Task<Motorcycle> UpdateAsync(Motorcycle motorcycle);
         Task<PaginatedResult<MotorcycleResponseDto>> GetAllMotorciclePaginated(
             PageRequest page,
-            MessageQuery? filter = null,
+            MotorcycleQuery? filter = null,
             CancellationToken ct = default
         );
         Task<Motorcycle> GetByIdAsync(Guid id);
         Task DeleteAsync(Motorcycle motorcycle);
+
+        Task RemoveMotorcyclesByYardId(Guid yardId);
     }
 }

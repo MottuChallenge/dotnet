@@ -1,15 +1,16 @@
 ﻿using MottuChallenge.Application.Repositories;
-using MottuChallenge.Domain.Exceptions;
 
 namespace MottuChallenge.Application.UseCases.Yards
 {
     public class DeleteYardUseCase
     {
         private readonly IYardRepository _yardRepository;
+        private readonly IMotorcycleRepository _motorcycleRepository;
 
-        public DeleteYardUseCase(IYardRepository yardRepository)
+        public DeleteYardUseCase(IYardRepository yardRepository, IMotorcycleRepository motorcycleRepository)
         {
             _yardRepository = yardRepository;
+            _motorcycleRepository = motorcycleRepository;
         }
 
         public async Task DeleteYardAsync(Guid yardId)
@@ -18,6 +19,8 @@ namespace MottuChallenge.Application.UseCases.Yards
             if (yard == null)
                 throw new KeyNotFoundException($"Yard with ID {yardId} not found.");
 
+
+            await _motorcycleRepository.RemoveMotorcyclesByYardId(yardId);
             await _yardRepository.DeleteAsync(yard);
         }
     }
