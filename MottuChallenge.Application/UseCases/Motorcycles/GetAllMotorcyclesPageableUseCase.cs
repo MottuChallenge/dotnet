@@ -14,7 +14,7 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
         }
         public async Task<PaginatedResult<MotorcycleResponseDto>> FindAllMotorcyclePageable(
             PageRequest page,
-            MessageQuery? filter = null,
+            MotorcycleQuery? filter = null,
             CancellationToken ct = default
         )
         {
