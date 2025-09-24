@@ -1,4 +1,5 @@
 ﻿using MottuChallenge.Application.DTOs.Request;
+using MottuChallenge.Application.Helpers;
 using MottuChallenge.Application.Repositories;
 using MottuChallenge.Domain.Entities;
 using MottuChallenge.Domain.Exceptions;
@@ -40,6 +41,7 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
             if (dto.SpotId.HasValue && dto.SpotId.Value != Guid.Empty)
             {
                 var sector = await _sectorRepository.GetSectorBySpotId(dto.SpotId.Value);
+                ValidateIfExistMotorcycleInsideSpot.ValidateMotorcycleInsideSpot(sector, dto.SpotId.Value);
                 var spot = sector.Spots.FirstOrDefault(s => s.SpotId == dto.SpotId.Value);
                 if (spot == null)
                     throw new KeyNotFoundException("Spot not found in the specified sector.");
