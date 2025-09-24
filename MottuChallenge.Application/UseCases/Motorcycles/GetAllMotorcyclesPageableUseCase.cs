@@ -1,7 +1,6 @@
 ﻿using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Pagination;
 using MottuChallenge.Application.Repositories;
-using MottuChallenge.Domain.Entities;
 
 namespace MottuChallenge.Application.UseCases.Motorcycles
 {
