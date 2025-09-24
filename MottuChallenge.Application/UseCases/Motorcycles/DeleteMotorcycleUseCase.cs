@@ -20,9 +20,14 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
             if (motorcycle == null)
                 throw new KeyNotFoundException($"Motorcycle with ID {motorcycleId} not found.");
 
-           
-            motorcycle.RemoveSpot();
-            await _sectorRepository.UpdateAsync(motorcycle.Spot.Sector);
+            if (motorcycle.SpotId.HasValue && motorcycle.SpotId.Value != Guid.Empty)
+            {
+                var sector = await _sectorRepository.GetSectorBySpotId(motorcycle.SpotId.Value);
+
+                motorcycle.RemoveSpot();
+                await _sectorRepository.UpdateAsync(sector);
+            }
+            
             await _motorcycleRepository.DeleteAsync(motorcycle);
         }
     }
