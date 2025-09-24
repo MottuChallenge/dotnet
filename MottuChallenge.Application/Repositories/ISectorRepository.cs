@@ -1,4 +1,6 @@
-﻿using MottuChallenge.Domain.Entities;
+﻿using MottuChallenge.Application.DTOs.Response;
+using MottuChallenge.Application.Pagination;
+using MottuChallenge.Domain.Entities;
 
 namespace MottuChallenge.Application.Repositories
 {
@@ -12,5 +14,9 @@ namespace MottuChallenge.Application.Repositories
         Task<Sector> GetSectorBySpotId(Guid spotId);
         Task<Sector> UpdateAsync(Sector sector);
         Task DeleteAsync(Sector sector);
+        Task<PaginatedResult<SectorResponseDto>> GetAllSectorPaginated(
+            PageRequest page,
+            SectorQuery? filter = null,
+            CancellationToken ct = default);
     }
 }
