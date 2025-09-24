@@ -1,5 +1,6 @@
 ﻿using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Helpers;
+using MottuChallenge.Application.Pagination;
 using MottuChallenge.Application.Repositories;
 
 namespace MottuChallenge.Application.UseCases.Yards
@@ -30,6 +31,15 @@ namespace MottuChallenge.Application.UseCases.Yards
             }
 
             return result;
+        }
+
+        public async Task<PaginatedResult<YardResponseDto>> FindAllYardPageable(
+            PageRequest page,
+            YardQuery? filter = null,
+            CancellationToken ct = default
+        )
+        {
+            return await _yardRepository.GetAllYardPaginated(page, filter, ct);
         }
     }
 }
