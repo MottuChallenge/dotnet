@@ -4,6 +4,8 @@ using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Pagination;
 using MottuChallenge.Application.UseCases.Motorcycles;
 using MottuChallenge.Domain.Exceptions;
+using System;
+using System.Threading.Tasks;
 
 namespace MottuChallenge.API.Controllers
 {
@@ -15,21 +17,26 @@ namespace MottuChallenge.API.Controllers
         private readonly GetAllMotorcyclesPageableUseCase _getAllMotorcyclesPageableUseCase;
         private readonly UpdateMotorcycleUseCase _updateMotorcycleUseCase;
         private readonly DeleteMotorcycleUseCase _deleteMotorcycleUseCase;
-
+        private readonly GetMotorcycleByIdUseCase _getMotorcycleByIdUseCase;
 
         public MotorcyclesController(
             CreateMotorcycleUseCase createMotorcycleUseCase,
             GetAllMotorcyclesPageableUseCase getAllMotorcyclesPageableUseCase,
             UpdateMotorcycleUseCase updateMotorcycleUseCase,
-            DeleteMotorcycleUseCase deleteMotorcycleUseCase)
+            DeleteMotorcycleUseCase deleteMotorcycleUseCase,
+            GetMotorcycleByIdUseCase getMotorcycleByIdUseCase)
         {
             _createMotorcycleUseCase = createMotorcycleUseCase;
             _getAllMotorcyclesPageableUseCase = getAllMotorcyclesPageableUseCase;
             _updateMotorcycleUseCase = updateMotorcycleUseCase;
             _deleteMotorcycleUseCase = deleteMotorcycleUseCase;
+            _getMotorcycleByIdUseCase = getMotorcycleByIdUseCase;
         }
 
+        // POST: api/motorcycles
         [HttpPost]
+        [ProducesResponseType(typeof(MotorcycleResponseDto), 201)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> SaveMotorcycle([FromBody] MotorcycleDto dto)
         {
             try
@@ -39,47 +46,48 @@ namespace MottuChallenge.API.Controllers
 
                 var motorcycle = await _createMotorcycleUseCase.SaveMotorcycleAsync(dto);
 
-                return Ok(motorcycle);
-            } catch(KeyNotFoundException ex)
+                return CreatedAtAction(nameof(GetMotorcycleById), new { id = motorcycle.Id }, motorcycle);
+            }
+            catch (KeyNotFoundException ex)
             {
                 return NotFound(new { message = ex.Message });
-            } catch (ArgumentException ex)
+            }
+            catch (ArgumentException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
-            
         }
 
-
+        // GET: api/motorcycles
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedResult<MotorcycleResponseDto>), 200)]
-        public async Task<IActionResult> GetAllMotorcyclesPaginated([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> GetAllMotorcyclesPaginated([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? plate = null)
         {
-            var pageRequest = new PageRequest();
-            pageRequest.Page = page;
-            pageRequest.PageSize = pageSize;
+            var pageRequest = new PageRequest
+            {
+                Page = page,
+                PageSize = pageSize
+            };
 
-            var paginatedResult = await _getAllMotorcyclesPageableUseCase.FindAllMotorcyclePageable(pageRequest);
+            var filter = new MotorcycleQuery
+            {
+                Plate = plate
+            };
 
-            // Map para DTOs
-            var response = new PaginatedResult<MotorcycleResponseDto>(
-                paginatedResult.Items.Select(m => new MotorcycleResponseDto
-                {
-                    Id = m.Id,
-                    Model = m.Model,
-                    EngineType = m.EngineType,
-                    Plate = m.Plate,
-                    LastRevisionDate = m.LastRevisionDate,
-                    SpotId = m.SpotId
-                }).ToList(),
-                paginatedResult.TotalItems,
-                paginatedResult.Page,
-                paginatedResult.PageSize
-            );
+            try
+            {
+                var paginatedResult = await _getAllMotorcyclesPageableUseCase.FindAllMotorcyclePageable(pageRequest, filter);
 
-            return Ok(response);
+                return Ok(paginatedResult);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
+        // PUT: api/motorcycles/{id}
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(void), 204)]
         [ProducesResponseType(typeof(string), 400)]
@@ -89,18 +97,19 @@ namespace MottuChallenge.API.Controllers
             try
             {
                 var motorcycle = await _updateMotorcycleUseCase.UpdateMotorcycleAsync(id, dto);
-                return NoContent();
+                return NoContent(); // Retorna 204 No Content
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(new { message = ex.Message });
+                return NotFound(new { message = ex.Message }); // Retorna 404 Not Found se o recurso não for encontrado
             }
             catch (DomainValidationException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message }); // Retorna 400 Bad Request para falha de validação
             }
         }
 
+        // DELETE: api/motorcycles/{id}
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(void), 204)]
         [ProducesResponseType(typeof(string), 404)]
@@ -110,16 +119,33 @@ namespace MottuChallenge.API.Controllers
             try
             {
                 await _deleteMotorcycleUseCase.DeleteMotorcycleAsync(id);
-                return NoContent();
+                return NoContent(); // Retorna 204 No Content em caso de sucesso
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message }); // Retorna 404 Not Found caso a moto não seja encontrada
+            }
+            catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message }); // Retorna 400 Bad Request para falha de validação
+            }
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(MotorcycleResponseDto), 200)]
+        [ProducesResponseType(typeof(string), 404)]
+        public async Task<IActionResult> GetMotorcycleById([FromRoute] Guid id)
+        {
+            try
+            {
+                var motorcycle = await _getMotorcycleByIdUseCase.FindMotorcycleById(id);
+                return Ok(motorcycle);
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new { message = ex.Message });
             }
-            catch (DomainValidationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
         }
+
     }
 }

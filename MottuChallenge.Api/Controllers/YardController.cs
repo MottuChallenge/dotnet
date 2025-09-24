@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MottuChallenge.Application.DTOs.Request;
+using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.DTOs.Validations;
+using MottuChallenge.Application.Pagination;
 using MottuChallenge.Application.UseCases.Yards;
 using MottuChallenge.Domain.Exceptions;
 
@@ -17,8 +19,12 @@ namespace MottuChallenge.Api.Controllers
         private readonly UpdateYardUseCase _updateYardUseCase;
         private readonly DeleteYardUseCase _deleteYardUseCase;
 
-
-        public YardController(CreateYardUseCase createYardUseCase, GetAllYardsUseCase getAllYardsUseCase, GetYardByIdUseCase getYardByIdUseCase, UpdateYardUseCase updateYardUseCase, DeleteYardUseCase deleteYardUseCase)
+        public YardController(
+            CreateYardUseCase createYardUseCase,
+            GetAllYardsUseCase getAllYardsUseCase,
+            GetYardByIdUseCase getYardByIdUseCase,
+            UpdateYardUseCase updateYardUseCase,
+            DeleteYardUseCase deleteYardUseCase)
         {
             _createYardUseCase = createYardUseCase;
             _getAllYardsUseCase = getAllYardsUseCase;
@@ -27,9 +33,11 @@ namespace MottuChallenge.Api.Controllers
             _deleteYardUseCase = deleteYardUseCase;
         }
 
+        // POST: api/yards
         [HttpPost]
-        [ProducesResponseType(typeof(void), 201)]
+        [ProducesResponseType(typeof(YardResponseDto), 201)]
         [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Post([FromBody] CreateYardDto createYardDto)
         {
             var validator = new CreateYardDtoValidator();
@@ -45,28 +53,38 @@ namespace MottuChallenge.Api.Controllers
 
                 return ValidationProblem(modelState);
             }
+
             try
             {
-                await _createYardUseCase.SaveYard(createYardDto);
-                return Created();
+                var createdYard = await _createYardUseCase.SaveYard(createYardDto);
+                // Retorna 201 Created com a URL do recurso criado (idealmente, incluindo o ID no header Location)
+                return CreatedAtAction(nameof(GetById), new { id = createdYard.Id }, createdYard);
             }
             catch (DomainValidationException ex)
             {
                 return BadRequest(new { message = ex.Message });
-
             }
         }
 
+        // GET: api/yards
         [HttpGet]
-        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(List<YardResponseDto>), 200)]
         public async Task<IActionResult> GetAllYardsAsync()
         {
-            var yards = await _getAllYardsUseCase.FindAllYards();
-            return Ok(yards);
+            try
+            {
+                var yards = await _getAllYardsUseCase.FindAllYards();
+                return Ok(yards);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
+        // GET: api/yards/{id}
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(YardResponseDto), 200)]
         [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
@@ -81,6 +99,7 @@ namespace MottuChallenge.Api.Controllers
             }
         }
 
+        // PUT: api/yards/{id}
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(void), 204)]
         [ProducesResponseType(typeof(string), 400)]
@@ -90,18 +109,19 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 await _updateYardUseCase.UpdateYardNameAsync(id, dto);
-                return NoContent();
+                return NoContent(); // Retorna 204 No Content para sucesso na atualização
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(new { message = ex.Message });
+                return NotFound(new { message = ex.Message }); // Retorna 404 Not Found caso o yard não seja encontrado
             }
             catch (DomainValidationException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message }); // Retorna 400 Bad Request caso haja erro de validação
             }
         }
 
+        // DELETE: api/yards/{id}
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(void), 204)]
         [ProducesResponseType(typeof(string), 404)]
@@ -111,17 +131,49 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 await _deleteYardUseCase.DeleteYardAsync(id);
-                return NoContent();
+                return NoContent(); // Retorna 204 No Content em caso de sucesso na exclusão
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(new { message = ex.Message });
+                return NotFound(new { message = ex.Message }); // Retorna 404 Not Found caso o yard não seja encontrado
             }
             catch (DomainValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message }); // Retorna 400 Bad Request caso haja erro de validação
+            }
+        }
+
+        // GET: api/yards/paginated
+        [HttpGet("paginated")]
+        [ProducesResponseType(typeof(PaginatedResult<YardResponseDto>), 200)]
+        public async Task<IActionResult> GetAllPaginated(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? name = null,
+            CancellationToken ct = default)
+        {
+            var pageRequest = new PageRequest
+            {
+                Page = page,
+                PageSize = pageSize
+            };
+
+            var filter = new YardQuery
+            {
+                Name = name
+            };
+
+            try
+            {
+                var result = await _getAllYardsUseCase.FindAllYardPageable(pageRequest, filter, ct);
+                return Ok(result); // Retorna 200 OK com os dados paginados
+            }
+            catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
 
     }
 }
