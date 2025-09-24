@@ -6,10 +6,12 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
     public class DeleteMotorcycleUseCase
     {
         private readonly IMotorcycleRepository _motorcycleRepository;
+        private readonly ISectorRepository _sectorRepository;
 
-        public DeleteMotorcycleUseCase(IMotorcycleRepository motorcycleRepository)
+        public DeleteMotorcycleUseCase(IMotorcycleRepository motorcycleRepository, ISectorRepository sectorRepository)
         {
             _motorcycleRepository = motorcycleRepository;
+            _sectorRepository = sectorRepository;
         }
 
         public async Task DeleteMotorcycleAsync(Guid motorcycleId)
@@ -18,9 +20,9 @@ namespace MottuChallenge.Application.UseCases.Motorcycles
             if (motorcycle == null)
                 throw new KeyNotFoundException($"Motorcycle with ID {motorcycleId} not found.");
 
-            // Se estiver associado a um Spot, você poderia limpar a associação aqui
-            // motorcycle.RemoveSpot();
-
+           
+            motorcycle.RemoveSpot();
+            await _sectorRepository.UpdateAsync(motorcycle.Spot.Sector);
             await _motorcycleRepository.DeleteAsync(motorcycle);
         }
     }
