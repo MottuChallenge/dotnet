@@ -1,4 +1,5 @@
 ﻿using MottuChallenge.Application.DTOs.Response;
+using MottuChallenge.Application.Pagination;
 using MottuChallenge.Application.Repositories;
 
 namespace MottuChallenge.Application.UseCases.Sectors
@@ -38,6 +39,15 @@ namespace MottuChallenge.Application.UseCases.Sectors
                     Y = s.Y
                 }).ToList()
             }).ToList();
+        }
+
+        public async Task<PaginatedResult<SectorResponseDto>> FindAllSectorPageable(
+            PageRequest page,
+            SectorQuery? filter = null,
+            CancellationToken ct = default
+        )
+        {
+            return await _sectorRepository.GetAllSectorPaginated(page, filter, ct);
         }
     }
 }

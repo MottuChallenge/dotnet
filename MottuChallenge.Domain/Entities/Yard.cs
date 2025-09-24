@@ -1,6 +1,7 @@
 ﻿using MottuChallenge.Domain.Exceptions;
 using MottuChallenge.Domain.Validations;
 using MottuChallenge.Domain.ValueObjects;
+using System.Text.Json.Serialization;
 
 namespace MottuChallenge.Domain.Entities
 {
@@ -12,6 +13,7 @@ namespace MottuChallenge.Domain.Entities
         public Address Address { get; private set; }
 
         private readonly List<Sector> _sectors = new();
+        [JsonIgnore]
         public IReadOnlyCollection<Sector> Sectors => _sectors.AsReadOnly();
 
         private readonly List<PolygonPoint> _points = new();

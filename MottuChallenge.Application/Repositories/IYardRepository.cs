@@ -1,4 +1,6 @@
-﻿using MottuChallenge.Domain.Entities;
+﻿using MottuChallenge.Application.DTOs.Response;
+using MottuChallenge.Application.Pagination;
+using MottuChallenge.Domain.Entities;
 
 namespace MottuChallenge.Application.Repositories
 {
@@ -13,6 +15,12 @@ namespace MottuChallenge.Application.Repositories
         Task UpdateAsync(Yard yard);
 
         Task DeleteAsync(Yard yard);
-        
+
+        Task<PaginatedResult<YardResponseDto>> GetAllYardPaginated(
+            PageRequest page,
+            YardQuery? filter = null,
+            CancellationToken ct = default);
+
+
     }
 }
