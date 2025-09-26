@@ -24,7 +24,7 @@ namespace MottuChallenge.Api
                 {
                     Title = "Mottu Challenge API",
                     Version = "v1",
-                    Description = "API para gerenciamento de motocicletas, p·tios e setores.",
+                    Description = "API para gerenciamento de motocicletas, p√°tios e setores.",
                     Contact = new OpenApiContact
                     {
                         Name = "Pedro Henrique",
