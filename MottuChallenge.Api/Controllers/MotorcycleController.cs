@@ -44,7 +44,7 @@ namespace MottuChallenge.API.Controllers
         ///     {
         ///        "plate": "ABC1234",
         ///        "model": "Yamaha XJ6",
-        ///        "engineType": "0",
+        ///        "engineType": 0, // 0: COMBUSTION, 1: ELETRIC,
         ///        "lastRevisionDate": "2025-09-26T00:00:00",
         ///        "spotId": "00000000-0000-0000-0000-000000000000" // opcional
         ///     }
@@ -112,9 +112,11 @@ namespace MottuChallenge.API.Controllers
         ///
         ///     PUT /api/motorcycles/123e4567-e89b-12d3-a456-426614174000
         ///     {
-        ///        "plate": "XYZ5678",
-        ///        "model": "Honda CB500F",
-        ///        "year": 2021
+        ///        plate": "ABC1234",
+        ///        "model": "Yamaha XJ6",
+        ///        "engineType": 0, // 0: COMBUSTION, 1: ELETRIC,
+        ///        "lastRevisionDate": "2025-09-26T00:00:00",
+        ///        "spotId": "00000000-0000-0000-0000-000000000000" // opcional
         ///     }
         ///
         /// </remarks>
