@@ -92,7 +92,7 @@ Essa organização garante:
    ```
 4. Depois de dar um Update-Database rode esse comando no terminal
    ```bash
-   mysql -h 127.0.0.1 -P 3306 -u root -p test < .\mysql-init\init.sq
+   mysql -h 127.0.0.1 -P 3306 -u root -p MottuGridDb < .\mysql-init\init.sq
    ```
    para isso voce deve estar na pasta MottuChallenge.Api
    Esse comando irá popular o banco inicialmente
@@ -195,7 +195,7 @@ Content-Type: application/json
 ```json
 {
   "model": "Honda CG 160",
-  "engineType": "Flex",
+  "engineType": 0,
   "plate": "ABC-1234",
   "lastRevisionDate": "2025-09-20T00:00:00",
   "spotId": "c0a80123-4567-890a-bcde-f1234567890a"
@@ -210,7 +210,7 @@ Content-Type: application/json
 ```json
 {
   "model": "Honda CG 160 Titan",
-  "engineType": "Flex",
+  "engineType": 0,
   "plate": "ABC-1234",
   "lastRevisionDate": "2025-09-22T00:00:00",
   "spotId": "c0a80123-4567-890a-bcde-f1234567890a"
