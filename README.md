@@ -81,17 +81,23 @@ Essa organização garante:
    git clone https://github.com/MottuChallenge/dotnet.git
    ```
    Abra a solução
-2. Configure a connection string no appsettings.json:
+2. Entre na pasta do MottuChallenge.Api e rode o comando 
   ```bash
-  "ConnectionStrings": {
-  "MySqlConnection": "server=localhost;uid={seu usuario};pwd={sua senha};database={nome do database}"
+  docker-compose up -d
   }
   ```
+  esse comando subira um banco mysql no docker
 3. Abra o Package menager console que fica no tools NuGet Package Menage e rode esse comando
    ```bash
    Update-Database -Project MottuChallenge.Infrastructure -StartupProject MottuChallenge.Api
    ```
-4. Start o Programa
+4. Depois de dar um Update-Database rode esse comando no terminal
+   ```bash
+   mysql -h 127.0.0.1 -P 3306 -u root -p test < .\mysql-init\init.sq
+   ```
+   para isso voce deve estar na pasta MottuChallenge.Api
+   Esse comando irá popular o banco inicialmente
+5. Start o Programa
 
 ---
 
