@@ -84,9 +84,8 @@ Essa organização garante:
 2. Entre na pasta do MottuChallenge.Api e rode o comando 
   ```bash
   docker-compose up -d
-  }
   ```
-  esse comando subira um banco mysql no docker
+   esse comando subira um banco mysql no docker
 3. Abra o Package menager console que fica no tools NuGet Package Menage e rode esse comando
    ```bash
    Update-Database -Project MottuChallenge.Infrastructure -StartupProject MottuChallenge.Api
