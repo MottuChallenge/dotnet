@@ -32,7 +32,11 @@ namespace MottuChallenge.Api
                         Url = new Uri("https://github.com/Pedro-Henrique3216")
                     }
                 });
+                var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
+            
 
             var app = builder.Build();
 

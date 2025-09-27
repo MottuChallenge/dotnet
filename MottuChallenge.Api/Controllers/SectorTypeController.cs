@@ -31,10 +31,23 @@ namespace MottuChallenge.Api.Controllers
             _getSectorTypeByIdUseCase = getSectorTypeByIdUseCase;
         }
 
-        // POST: api/sectors_type
+        /// <summary>
+        /// Cria um novo tipo de setor.
+        /// </summary>
+        /// <param name="sectorTypeCreateDto">Objeto contendo os dados do tipo de setor.</param>
+        /// <returns>Retorna o tipo de setor criado com status 201.</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///     POST /api/sectors_type
+        ///     {
+        ///        "name": "Setor VIP"
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="201">Tipo de setor criado com sucesso.</response>
+        /// <response code="400">Falha de validação.</response>
         [HttpPost]
-        [ProducesResponseType(typeof(void), 201)]
-        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody] SectorTypeDto sectorTypeCreateDto)
         {
             var validator = new SectorTypeDtoValidator();
@@ -54,7 +67,6 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var createdSectorType = await _createSectorTypeUseCase.SaveSectorType(sectorTypeCreateDto);
-                // Retorna 201 Created com a URL do recurso criado (idealmente, incluindo o ID no header Location)
                 return CreatedAtAction(nameof(GetById), new { id = createdSectorType.Id }, createdSectorType);
             }
             catch (DomainValidationException ex)
@@ -63,15 +75,18 @@ namespace MottuChallenge.Api.Controllers
             }
         }
 
-        // GET: api/sectors_type
+        /// <summary>
+        /// Lista todos os tipos de setores.
+        /// </summary>
+        /// <returns>Lista de tipos de setores.</returns>
+        /// <response code="200">Retorna a lista de tipos de setores.</response>
         [HttpGet]
-        [ProducesResponseType(typeof(List<SectorTypeDto>), 200)]
         public async Task<IActionResult> Get()
         {
             try
             {
                 var sectorTypes = await _getAllSectorTypesUseCase.FindAllSectorTypes();
-                return Ok(sectorTypes); // Retorna 200 OK com a lista de tipos de setores
+                return Ok(sectorTypes);
             }
             catch (Exception ex)
             {
@@ -79,17 +94,31 @@ namespace MottuChallenge.Api.Controllers
             }
         }
 
-        // PUT: api/sectors_type/{id}
+        /// <summary>
+        /// Atualiza um tipo de setor existente pelo ID.
+        /// </summary>
+        /// <param name="id">ID do tipo de setor a ser atualizado.</param>
+        /// <param name="sectorTypeDto">Objeto contendo os novos dados do tipo de setor.</param>
+        /// <returns>Tipo de setor atualizado.</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///     PUT /api/sectors_type/123e4567-e89b-12d3-a456-426614174000
+        ///     {
+        ///        "name": "Setor Premium"
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="200">Tipo de setor atualizado com sucesso.</response>
+        /// <response code="400">Falha de validação.</response>
+        /// <response code="404">Tipo de setor não encontrado.</response>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(void), 200)]
-        [ProducesResponseType(typeof(string), 400)]
-        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Put([FromRoute] Guid id, [FromBody] SectorTypeDto sectorTypeDto)
         {
             try
             {
                 var updatedSectorType = await _updateSectorTypeUseCase.UpdateSectorTypeById(sectorTypeDto, id);
-                return Ok(updatedSectorType); // Retorna 200 OK com o tipo de setor atualizado
+                return Ok(updatedSectorType);
             }
             catch (DomainValidationException ex)
             {
@@ -101,30 +130,51 @@ namespace MottuChallenge.Api.Controllers
             }
         }
 
-        // DELETE: api/sectors_type/{id}
+        /// <summary>
+        /// Remove um tipo de setor pelo ID.
+        /// </summary>
+        /// <param name="id">ID do tipo de setor a ser removido.</param>
+        /// <returns>Status 204 se removido com sucesso.</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///     DELETE /api/sectors_type/123e4567-e89b-12d3-a456-426614174000
+        ///
+        /// </remarks>
+        /// <response code="204">Tipo de setor removido com sucesso.</response>
+        /// <response code="404">Tipo de setor não encontrado.</response>
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(void), 204)]
-        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             try
             {
                 await _deleteSectorTypeUseCase.DeleteSectorTypeById(id);
-                return NoContent(); // Retorna 204 No Content em caso de sucesso na exclusão
+                return NoContent();
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(new { message = ex.Message }); // Retorna 404 Not Found caso o tipo de setor não seja encontrado
+                return NotFound(new { message = ex.Message });
             }
             catch (DomainValidationException ex)
             {
-                return BadRequest(new { message = ex.Message }); // Retorna 400 Bad Request em caso de falha de validação
+                return BadRequest(new { message = ex.Message });
             }
         }
 
+        /// <summary>
+        /// Consulta um tipo de setor pelo ID.
+        /// </summary>
+        /// <param name="id">ID do tipo de setor.</param>
+        /// <returns>Dados do tipo de setor encontrado.</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///     GET /api/sectors_type/123e4567-e89b-12d3-a456-426614174000
+        ///
+        /// </remarks>
+        /// <response code="200">Tipo de setor encontrado.</response>
+        /// <response code="404">Tipo de setor não encontrado.</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(SectorTypeDto), 200)]
-        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             try

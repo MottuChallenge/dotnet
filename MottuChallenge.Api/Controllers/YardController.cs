@@ -33,11 +33,30 @@ namespace MottuChallenge.Api.Controllers
             _deleteYardUseCase = deleteYardUseCase;
         }
 
-        // POST: api/yards
+        /// <summary>
+        /// Cria um novo pátio.
+        /// </summary>
+        /// <param name="createYardDto">Objeto contendo os dados do pátio.</param>
+        /// <returns>Retorna o pátio criado com status 201.</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///     POST /api/yards
+        ///     {
+        ///        "name": "Pátio Central",
+        ///        "cep": "12345-678",
+        ///        "number": "100",
+        ///        "points": [
+        ///          { "pointOrder": 1, "x": 10.5, "y": 20.5 },
+        ///          { "pointOrder": 2, "x": 15.0, "y": 25.0 },
+        ///          { "pointOrder": 3, "x": 20.5, "y": 20.5 }
+        ///        ]
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="201">Pátio criado com sucesso.</response>
+        /// <response code="400">Falha de validação.</response>
         [HttpPost]
-        [ProducesResponseType(typeof(YardResponseDto), 201)]
-        [ProducesResponseType(typeof(string), 400)]
-        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Post([FromBody] CreateYardDto createYardDto)
         {
             var validator = new CreateYardDtoValidator();
@@ -50,14 +69,12 @@ namespace MottuChallenge.Api.Controllers
                 {
                     modelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
                 }
-
                 return ValidationProblem(modelState);
             }
 
             try
             {
                 var createdYard = await _createYardUseCase.SaveYard(createYardDto);
-                // Retorna 201 Created com a URL do recurso criado (idealmente, incluindo o ID no header Location)
                 return CreatedAtAction(nameof(GetById), new { id = createdYard.Id }, createdYard);
             }
             catch (DomainValidationException ex)
@@ -66,9 +83,12 @@ namespace MottuChallenge.Api.Controllers
             }
         }
 
-        // GET: api/yards
+        /// <summary>
+        /// Lista todos os pátios.
+        /// </summary>
+        /// <returns>Lista de pátios.</returns>
+        /// <response code="200">Retorna a lista de pátios.</response>
         [HttpGet]
-        [ProducesResponseType(typeof(List<YardResponseDto>), 200)]
         public async Task<IActionResult> GetAllYardsAsync()
         {
             try
@@ -82,10 +102,14 @@ namespace MottuChallenge.Api.Controllers
             }
         }
 
-        // GET: api/yards/{id}
+        /// <summary>
+        /// Consulta um pátio pelo ID.
+        /// </summary>
+        /// <param name="id">ID do pátio.</param>
+        /// <returns>Dados do pátio encontrado.</returns>
+        /// <response code="200">Pátio encontrado.</response>
+        /// <response code="404">Pátio não encontrado.</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(YardResponseDto), 200)]
-        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             try
@@ -99,53 +123,77 @@ namespace MottuChallenge.Api.Controllers
             }
         }
 
-        // PUT: api/yards/{id}
+        /// <summary>
+        /// Atualiza o nome de um pátio existente pelo ID.
+        /// </summary>
+        /// <param name="id">ID do pátio.</param>
+        /// <param name="dto">Objeto contendo o novo nome do pátio.</param>
+        /// <returns>Status 204 se atualizado com sucesso.</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///     PUT /api/yards/123e4567-e89b-12d3-a456-426614174000
+        ///     {
+        ///        "name": "Pátio Renovado"
+        ///     }
+        ///
+        /// </remarks>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(void), 204)]
-        [ProducesResponseType(typeof(string), 400)]
-        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> UpdateYardName([FromRoute] Guid id, [FromBody] UpdateYardDto dto)
         {
             try
             {
                 await _updateYardUseCase.UpdateYardNameAsync(id, dto);
-                return NoContent(); // Retorna 204 No Content para sucesso na atualização
+                return NoContent();
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(new { message = ex.Message }); // Retorna 404 Not Found caso o yard não seja encontrado
+                return NotFound(new { message = ex.Message });
             }
             catch (DomainValidationException ex)
             {
-                return BadRequest(new { message = ex.Message }); // Retorna 400 Bad Request caso haja erro de validação
+                return BadRequest(new { message = ex.Message });
             }
         }
 
-        // DELETE: api/yards/{id}
+        /// <summary>
+        /// Remove um pátio pelo ID.
+        /// </summary>
+        /// <param name="id">ID do pátio.</param>
+        /// <returns>Status 204 se removido com sucesso.</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///     DELETE /api/yards/123e4567-e89b-12d3-a456-426614174000
+        ///
+        /// </remarks>
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(void), 204)]
-        [ProducesResponseType(typeof(string), 404)]
-        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> DeleteYard([FromRoute] Guid id)
         {
             try
             {
                 await _deleteYardUseCase.DeleteYardAsync(id);
-                return NoContent(); // Retorna 204 No Content em caso de sucesso na exclusão
+                return NoContent();
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(new { message = ex.Message }); // Retorna 404 Not Found caso o yard não seja encontrado
+                return NotFound(new { message = ex.Message });
             }
             catch (DomainValidationException ex)
             {
-                return BadRequest(new { message = ex.Message }); // Retorna 400 Bad Request caso haja erro de validação
+                return BadRequest(new { message = ex.Message });
             }
         }
 
-        // GET: api/yards/paginated
+        /// <summary>
+        /// Lista pátios paginados.
+        /// </summary>
+        /// <param name="page">Número da página (default: 1).</param>
+        /// <param name="pageSize">Tamanho da página (default: 10).</param>
+        /// <param name="name">Filtro pelo nome do pátio (opcional).</param>
+        /// <param name="ct">Token de cancelamento.</param>
+        /// <returns>Resultado paginado de pátios.</returns>
         [HttpGet("paginated")]
-        [ProducesResponseType(typeof(PaginatedResult<YardResponseDto>), 200)]
         public async Task<IActionResult> GetAllPaginated(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
@@ -166,14 +214,12 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var result = await _getAllYardsUseCase.FindAllYardPageable(pageRequest, filter, ct);
-                return Ok(result); // Retorna 200 OK com os dados paginados
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
-
-
     }
 }
