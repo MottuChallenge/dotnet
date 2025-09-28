@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MottuChallenge.Api.Hateoas;
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.Pagination;
@@ -62,7 +63,13 @@ namespace MottuChallenge.API.Controllers
                     return BadRequest(ModelState);
 
                 var motorcycle = await _createMotorcycleUseCase.SaveMotorcycleAsync(dto);
-                return CreatedAtAction(nameof(GetMotorcycleById), new { id = motorcycle.Id }, motorcycle);
+                var response = new
+                {
+                    data = motorcycle,
+                    links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, motorcycle.Id)
+                };
+
+                return CreatedAtAction(nameof(GetMotorcycleById), new { id = motorcycle.Id }, response);
             }
             catch (KeyNotFoundException ex)
             {
@@ -93,7 +100,20 @@ namespace MottuChallenge.API.Controllers
             try
             {
                 var paginatedResult = await _getAllMotorcyclesPageableUseCase.FindAllMotorcyclePageable(pageRequest, filter);
-                return Ok(paginatedResult);
+                var response = new
+                {
+                    data = paginatedResult.Items,
+                    pagination = new
+                    {
+                        paginatedResult.Page,
+                        paginatedResult.PageSize,
+                        paginatedResult.TotalItems,
+                        paginatedResult.TotalPages
+                    },
+                    links = MotorcycleLinkBuilder.BuildCollectionLinks(Url, page, pageSize, plate)
+                };
+
+                return Ok(response);
             }
             catch (ArgumentException ex)
             {
@@ -192,7 +212,13 @@ namespace MottuChallenge.API.Controllers
             try
             {
                 var motorcycle = await _getMotorcycleByIdUseCase.FindMotorcycleById(id);
-                return Ok(motorcycle);
+                var response = new
+                {
+                    data = motorcycle,
+                    links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, id)
+                };
+
+                return Ok(response);
             }
             catch (KeyNotFoundException ex)
             {

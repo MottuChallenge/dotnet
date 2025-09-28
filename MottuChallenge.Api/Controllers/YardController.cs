@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using MottuChallenge.Api.Hateoas;
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.DTOs.Validations;
@@ -75,7 +76,13 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var createdYard = await _createYardUseCase.SaveYard(createYardDto);
-                return CreatedAtAction(nameof(GetById), new { id = createdYard.Id }, createdYard);
+                var response = new
+                {
+                    Data = createdYard,
+                    Links = YardLinkBuilder.BuildYardLinks(Url, createdYard.Id)
+                };
+
+                return CreatedAtAction(nameof(GetById), new { id = createdYard.Id }, response);
             }
             catch (DomainValidationException ex)
             {
@@ -94,7 +101,18 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var yards = await _getAllYardsUseCase.FindAllYards();
-                return Ok(yards);
+                var response = new
+                {
+                    Data = yards.Select(y => new {
+                        y.Id,
+                        y.Name,
+                        y.Address,
+                        Links = YardLinkBuilder.BuildYardLinks(Url, y.Id)
+                    }),
+                    Links = YardLinkBuilder.BuildCollectionLinks(Url)
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -115,7 +133,13 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var yard = await _getYardByIdUseCase.FindYardById(id);
-                return Ok(yard);
+                var response = new
+                {
+                    Data = yard,
+                    Links = YardLinkBuilder.BuildYardLinks(Url, yard.Id)
+                };
+
+                return Ok(response);
             }
             catch (KeyNotFoundException ex)
             {

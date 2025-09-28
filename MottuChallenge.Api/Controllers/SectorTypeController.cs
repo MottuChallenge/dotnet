@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using MottuChallenge.Api.Hateoas;
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.DTOs.Validations;
 using MottuChallenge.Application.UseCases.SectorTypes;
@@ -67,7 +68,13 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var createdSectorType = await _createSectorTypeUseCase.SaveSectorType(sectorTypeCreateDto);
-                return CreatedAtAction(nameof(GetById), new { id = createdSectorType.Id }, createdSectorType);
+                var response = new
+                {
+                    Data = createdSectorType,
+                    Links = SectorTypeLinkBuilder.BuildSectorTypeLinks(Url, createdSectorType.Id)
+                };
+
+                return CreatedAtAction(nameof(GetById), new { id = createdSectorType.Id }, response);
             }
             catch (DomainValidationException ex)
             {
@@ -86,7 +93,13 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var sectorTypes = await _getAllSectorTypesUseCase.FindAllSectorTypes();
-                return Ok(sectorTypes);
+                var response = new
+                {
+                    Data = sectorTypes,
+                    Links = SectorTypeLinkBuilder.BuildCollectionLinks(Url)
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -180,7 +193,13 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var sectorType = await _getSectorTypeByIdUseCase.FindSectorTypeById(id);
-                return Ok(sectorType);
+                var response = new
+                {
+                    Data = sectorType,
+                    Links = SectorTypeLinkBuilder.BuildSectorTypeLinks(Url, id)
+                };
+
+                return Ok(response);
             }
             catch (KeyNotFoundException ex)
             {
