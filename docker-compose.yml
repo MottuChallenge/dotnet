@@ -10,7 +10,7 @@ services:
       MYSQL_USER: user_test
       MYSQL_PASSWORD: user_password
     ports:
-      - "3306:3306"    # Mapeia a porta 3306 do container para a porta 3306 do host
+      - "3307:3306"    # Mapeia a porta 3306 do container para a porta 3307 do host
     volumes:
       - mysql_data:/var/lib/mysql  # Persistência de dados
     networks:
