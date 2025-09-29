@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using MottuChallenge.Api.Hateoas;
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.DTOs.Validations;
@@ -128,7 +129,13 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var sector = await _getSectorByIdUseCase.FindSectorById(id);
-                return Ok(sector);
+                var response = new
+                {
+                    data = sector,
+                    links = SectorLinkBuilder.BuildSectorLinks(Url, id)
+                };
+
+                return Ok(response);
             }
             catch (KeyNotFoundException ex)
             {
@@ -248,7 +255,20 @@ namespace MottuChallenge.Api.Controllers
                 };
 
                 var result = await _getAllSectorsUseCase.FindAllSectorPageable(pageRequest, filter, ct);
-                return Ok(result);
+                var response = new
+                {
+                    data = result.Items,
+                    pagination = new
+                    {
+                        result.Page,
+                        result.PageSize,
+                        result.TotalItems,
+                        result.TotalPages
+                    },
+                    links = SectorLinkBuilder.BuildCollectionLinks(Url, page, pageSize, yardId, sectorTypeId)
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {

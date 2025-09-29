@@ -78,25 +78,27 @@ Essa organização garante:
 ### Passos
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/MottuChallenge/dotnet.git
+     git clone https://github.com/MottuChallenge/dotnet.git
    ```
-   Abra a solução
-2. Entre na pasta do MottuChallenge.Api e rode o comando 
+2. Entre na pasta pasta do projeto e rode o comando do docker compose para subir um banco mysql no docker
   ```bash
-  docker-compose up -d
+    cd .\dotnet\
+    docker-compose up -d
   ```
-   esse comando subira um banco mysql no docker
-3. Abra o Package menager console que fica no tools NuGet Package Menage e rode esse comando
+3. Rode o comando do database update para lançar as migrations no banco
    ```bash
-   Update-Database -Project MottuChallenge.Infrastructure -StartupProject MottuChallenge.Api
+    dotnet ef database update --startup-project MottuChallenge.Api --project MottuChallenge.Infrastructure
    ```
-4. Depois de dar um Update-Database rode esse comando no terminal
+4. Se quiser deixar o banco populado com alguns registro rode esse comando abaixo
    ```bash
-   mysql -h 127.0.0.1 -P 3306 -u root -p MottuGridDb < .\mysql-init\init.sq
+     mysql -h 127.0.0.1 -P 3306 -u root -p MottuGridDb < .\mysql-init\init.sq
+     # aqui vai pedir para colocar a senha do usuario root
    ```
-   para isso voce deve estar na pasta MottuChallenge.Api
-   Esse comando irá popular o banco inicialmente
-5. Start o Programa
+5. rode o programa
+   ```bash
+    dotnet run --project MottuChallenge.Api
+   # Abra a url no navegador http://localhost:5006/swagger/index.html
+   ``` 
 
 ---
 
