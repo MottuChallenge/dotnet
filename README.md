@@ -72,29 +72,47 @@ Essa organização garante:
 
 ### Pré-requisitos
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- Banco de dados MySQL
-- [EF Core CLI](https://learn.microsoft.com/en-us/ef/core/cli/dotnet)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+**Nota**: O EF Core CLI será instalado automaticamente no passo 2 das instruções.
 
 ### Passos
 1. Clone o repositório:
    ```bash
      git clone https://github.com/MottuChallenge/dotnet.git
    ```
-2. Entre na pasta pasta do projeto e rode o comando do docker compose para subir um banco mysql no docker
-  ```bash
-    cd .\dotnet\
-    docker-compose up -d
-  ```
-3. Rode o comando do database update para lançar as migrations no banco
+2. Instale o EF Core CLI globalmente (se ainda não tiver):
    ```bash
-    dotnet ef database update --startup-project MottuChallenge.Api --project MottuChallenge.Infrastructure
+     dotnet tool install --global dotnet-ef
    ```
-4. Se quiser deixar o banco populado com alguns registro rode esse comando abaixo
+3. Entre na pasta do projeto e rode o comando do docker compose para subir um banco mysql no docker:
    ```bash
-     mysql -h 127.0.0.1 -P 3306 -u root -p MottuGridDb < .\mysql-init\init.sq
-     # aqui vai pedir para colocar a senha do usuario root
+     cd .\dotnet\
+     docker-compose up -d
    ```
-5. rode o programa
+4. Rode o comando do database update para lançar as migrations no banco:
+   ```bash
+     dotnet ef database update --startup-project MottuChallenge.Api --project MottuChallenge.Infrastructure
+   ```
+4. Se quiser deixar o banco populado com alguns registros, use uma das opções abaixo:
+
+   **Opção A - Usando Docker (recomendado):**
+   ```bash
+   docker exec -i mysql mysql -u user_test -puser_password MottuGridDb < .\mysql-init\init.sql
+   ```
+
+   **Opção B - Copiando arquivo para o container:**
+   ```bash
+   docker cp .\mysql-init\init.sql mysql:/tmp/init.sql
+   docker exec mysql mysql -u user_test -puser_password MottuGridDb -e "source /tmp/init.sql"
+   ```
+
+   **Opção C - Se tiver cliente MySQL instalado:**
+   ```bash
+   mysql -h 127.0.0.1 -P 3307 -u user_test -p MottuGridDb < .\mysql-init\init.sql
+   # aqui vai pedir para colocar a senha: user_password
+   ```
+5. Rode o programa:
    ```bash
     dotnet run --project MottuChallenge.Api
    # Abra a url no navegador http://localhost:5006/swagger/index.html
