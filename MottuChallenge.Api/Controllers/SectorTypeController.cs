@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MottuChallenge.Api.Hateoas;
 using MottuChallenge.Application.DTOs.Request;
+using MottuChallenge.Application.DTOs.Response;
 using MottuChallenge.Application.DTOs.Validations;
 using MottuChallenge.Application.UseCases.SectorTypes;
 using MottuChallenge.Domain.Exceptions;
@@ -68,13 +69,14 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var createdSectorType = await _createSectorTypeUseCase.SaveSectorType(sectorTypeCreateDto);
-                var response = new
+                var sectorTypeResponse = new SectorTypeResponseDto()
                 {
-                    Data = createdSectorType,
+                    Id = createdSectorType.Id,
+                    Name = createdSectorType.Name,
                     Links = SectorTypeLinkBuilder.BuildSectorTypeLinks(Url, createdSectorType.Id)
                 };
 
-                return CreatedAtAction(nameof(GetById), new { id = createdSectorType.Id }, response);
+                return CreatedAtAction(nameof(GetById), new { id = createdSectorType.Id }, sectorTypeResponse);
             }
             catch (DomainValidationException ex)
             {
@@ -93,13 +95,12 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var sectorTypes = await _getAllSectorTypesUseCase.FindAllSectorTypes();
-                var response = new
+                foreach (var sectorTypeResponseDto in sectorTypes)
                 {
-                    Data = sectorTypes,
-                    Links = SectorTypeLinkBuilder.BuildCollectionLinks(Url)
-                };
+                    sectorTypeResponseDto.Links = SectorTypeLinkBuilder.BuildSectorTypeLinks(Url, sectorTypeResponseDto.Id);
+                }
 
-                return Ok(response);
+                return Ok(sectorTypes);
             }
             catch (Exception ex)
             {
@@ -193,13 +194,14 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var sectorType = await _getSectorTypeByIdUseCase.FindSectorTypeById(id);
-                var response = new
+                var sectorTypeResponse = new SectorTypeResponseDto()
                 {
-                    Data = sectorType,
-                    Links = SectorTypeLinkBuilder.BuildSectorTypeLinks(Url, id)
+                    Id = sectorType.Id,
+                    Name = sectorType.Name,
+                    Links = SectorTypeLinkBuilder.BuildSectorTypeLinks(Url, sectorType.Id)
                 };
 
-                return Ok(response);
+                return Ok(sectorTypeResponse);
             }
             catch (KeyNotFoundException ex)
             {

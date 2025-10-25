@@ -106,6 +106,10 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var sectors = await _getAllSectorsUseCase.FindAllSectors();
+                foreach (var sectorResponseDto in sectors)
+                {
+                    sectorResponseDto.Links = SectorLinkBuilder.BuildSectorLinks(Url, sectorResponseDto.Id);
+                }
                 return Ok(sectors);
             }
             catch (Exception ex)
@@ -129,13 +133,9 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var sector = await _getSectorByIdUseCase.FindSectorById(id);
-                var response = new
-                {
-                    data = sector,
-                    links = SectorLinkBuilder.BuildSectorLinks(Url, id)
-                };
+                sector.Links = SectorLinkBuilder.BuildSectorLinks(Url, id);
 
-                return Ok(response);
+                return Ok(sector);
             }
             catch (KeyNotFoundException ex)
             {
@@ -255,20 +255,9 @@ namespace MottuChallenge.Api.Controllers
                 };
 
                 var result = await _getAllSectorsUseCase.FindAllSectorPageable(pageRequest, filter, ct);
-                var response = new
-                {
-                    data = result.Items,
-                    pagination = new
-                    {
-                        result.Page,
-                        result.PageSize,
-                        result.TotalItems,
-                        result.TotalPages
-                    },
-                    links = SectorLinkBuilder.BuildCollectionLinks(Url, page, pageSize, yardId, sectorTypeId)
-                };
+                result.Links =  PaginatedLinkBuilder.BuildPaginatedLinks("GetAllPaginated", "sectors", Url, page, pageSize, result.TotalPages);
 
-                return Ok(response);
+                return Ok(result);
             }
             catch (Exception ex)
             {

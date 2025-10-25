@@ -76,13 +76,31 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var createdYard = await _createYardUseCase.SaveYard(createYardDto);
-                var response = new
+                var addressResponse = new AddressResponseDto()
                 {
-                    Data = createdYard,
+                    ZipCode = createdYard.Address.ZipCode,
+                    Street = createdYard.Address.Street,
+                    Number = createdYard.Address.Number,
+                    City = createdYard.Address.City,
+                    State = createdYard.Address.State
+                };
+                
+                var pointResponses = createdYard.Points.Select(p => new PointResponseDto()
+                {
+                    PointOrder = p.PointOrder,
+                    X = p.X,
+                    Y = p.Y
+                }).ToList();
+                var yardResponse = new YardResponseDto()
+                {
+                    Id = createdYard.Id,
+                    Name = createdYard.Name,
+                    Address = addressResponse,
+                    Points = pointResponses,
                     Links = YardLinkBuilder.BuildYardLinks(Url, createdYard.Id)
                 };
 
-                return CreatedAtAction(nameof(GetById), new { id = createdYard.Id }, response);
+                return CreatedAtAction(nameof(GetById), new { id = createdYard.Id }, yardResponse);
             }
             catch (DomainValidationException ex)
             {
@@ -101,18 +119,12 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var yards = await _getAllYardsUseCase.FindAllYards();
-                var response = new
+                foreach (var yardResponseDto in yards)
                 {
-                    Data = yards.Select(y => new {
-                        y.Id,
-                        y.Name,
-                        y.Address,
-                        Links = YardLinkBuilder.BuildYardLinks(Url, y.Id)
-                    }),
-                    Links = YardLinkBuilder.BuildCollectionLinks(Url)
-                };
+                    yardResponseDto.Links = YardLinkBuilder.BuildYardLinks(Url, yardResponseDto.Id);
+                }
 
-                return Ok(response);
+                return Ok(yards);
             }
             catch (Exception ex)
             {
@@ -133,13 +145,9 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var yard = await _getYardByIdUseCase.FindYardById(id);
-                var response = new
-                {
-                    Data = yard,
-                    Links = YardLinkBuilder.BuildYardLinks(Url, yard.Id)
-                };
+                yard.Links = YardLinkBuilder.BuildYardLinks(Url, yard.Id);
 
-                return Ok(response);
+                return Ok(yard);
             }
             catch (KeyNotFoundException ex)
             {
@@ -238,6 +246,7 @@ namespace MottuChallenge.Api.Controllers
             try
             {
                 var result = await _getAllYardsUseCase.FindAllYardPageable(pageRequest, filter, ct);
+                result.Links = PaginatedLinkBuilder.BuildPaginatedLinks("GetAllPaginated", "yards",Url, page, pageSize, result.TotalPages);
                 return Ok(result);
             }
             catch (Exception ex)

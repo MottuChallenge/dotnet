@@ -63,13 +63,18 @@ namespace MottuChallenge.API.Controllers
                     return BadRequest(ModelState);
 
                 var motorcycle = await _createMotorcycleUseCase.SaveMotorcycleAsync(dto);
-                var response = new
+                var motorcycleReponse = new MotorcycleResponseDto()
                 {
-                    data = motorcycle,
-                    links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, motorcycle.Id)
+                    Id = motorcycle.Id,
+                    Model = motorcycle.Model,
+                    EngineType = motorcycle.EngineType,
+                    Plate = motorcycle.Plate,
+                    LastRevisionDate = motorcycle.LastRevisionDate,
+                    SpotId = motorcycle.SpotId,
+                    Links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, motorcycle.Id)
                 };
 
-                return CreatedAtAction(nameof(GetMotorcycleById), new { id = motorcycle.Id }, response);
+                return CreatedAtAction(nameof(GetMotorcycleById), new { id = motorcycle.Id }, motorcycleReponse);
             }
             catch (KeyNotFoundException ex)
             {
@@ -100,20 +105,9 @@ namespace MottuChallenge.API.Controllers
             try
             {
                 var paginatedResult = await _getAllMotorcyclesPageableUseCase.FindAllMotorcyclePageable(pageRequest, filter);
-                var response = new
-                {
-                    data = paginatedResult.Items,
-                    pagination = new
-                    {
-                        paginatedResult.Page,
-                        paginatedResult.PageSize,
-                        paginatedResult.TotalItems,
-                        paginatedResult.TotalPages
-                    },
-                    links = MotorcycleLinkBuilder.BuildCollectionLinks(Url, page, pageSize, plate)
-                };
+                paginatedResult.Links = PaginatedLinkBuilder.BuildPaginatedLinks("GetAllMotorcyclesPaginated", "Motorcycles", Url, page, pageSize, paginatedResult.TotalPages);
 
-                return Ok(response);
+                return Ok(paginatedResult);
             }
             catch (ArgumentException ex)
             {
@@ -212,13 +206,18 @@ namespace MottuChallenge.API.Controllers
             try
             {
                 var motorcycle = await _getMotorcycleByIdUseCase.FindMotorcycleById(id);
-                var response = new
+                var motorcycleReponse = new MotorcycleResponseDto()
                 {
-                    data = motorcycle,
-                    links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, id)
+                    Id = motorcycle.Id,
+                    Model = motorcycle.Model,
+                    EngineType = motorcycle.EngineType,
+                    Plate = motorcycle.Plate,
+                    LastRevisionDate = motorcycle.LastRevisionDate,
+                    SpotId = motorcycle.SpotId,
+                    Links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, motorcycle.Id)
                 };
 
-                return Ok(response);
+                return Ok(motorcycleReponse);
             }
             catch (KeyNotFoundException ex)
             {
