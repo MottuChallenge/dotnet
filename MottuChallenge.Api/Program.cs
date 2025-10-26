@@ -1,5 +1,4 @@
-using System.Reflection;
-using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using MottuChallenge.Api.Extensions;
 using MottuChallenge.Application;
 using MottuChallenge.Application.Configurations;
@@ -19,7 +18,7 @@ namespace MottuChallenge.Api
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwagger(configs.Swagger);
-            
+            builder.Services.AddHealthServices(configs.ConnectionStrings);
 
             var app = builder.Build();
 
@@ -33,9 +32,13 @@ namespace MottuChallenge.Api
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
-
+            
             app.MapControllers();
+            
+            app.MapHealthChecks("/health-check", new HealthCheckOptions
+            {
+                ResponseWriter = HealthCheckExtensions.WriteResponse
+            });
 
             app.Run();
         }
