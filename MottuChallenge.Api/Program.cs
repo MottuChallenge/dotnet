@@ -18,6 +18,7 @@ namespace MottuChallenge.Api
             builder.Services.AddUseCases();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwagger(configs.Swagger);
             
 
             var app = builder.Build();
