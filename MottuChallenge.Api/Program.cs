@@ -35,7 +35,7 @@ namespace MottuChallenge.Api
             
             app.MapControllers();
             
-            app.MapHealthChecks("/health-check", new HealthCheckOptions
+            app.MapHealthChecks("/api/health-check", new HealthCheckOptions
             {
                 ResponseWriter = HealthCheckExtensions.WriteResponse
             });
