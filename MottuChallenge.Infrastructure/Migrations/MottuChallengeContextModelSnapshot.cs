@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MottuChallenge.Infrastructure.Persistence;
 
@@ -16,8 +17,10 @@ namespace MottuChallenge.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.19")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("MottuChallenge.Domain.Entities.Address", b =>
                 {
@@ -142,7 +145,7 @@ namespace MottuChallenge.Infrastructure.Migrations
                     b.HasIndex("SpotId")
                         .IsUnique();
 
-                    b.ToTable("Motorcycles", (string)null);
+                    b.ToTable("motorcycles", (string)null);
                 });
 
             modelBuilder.Entity("MottuChallenge.Domain.Entities.Sector", b =>
