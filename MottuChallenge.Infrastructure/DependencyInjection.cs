@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MottuChallenge.Application.Configurations;
 using MottuChallenge.Application.Interfaces;
 using MottuChallenge.Application.Repositories;
 using MottuChallenge.Infrastructure.Persistence;
@@ -11,17 +12,21 @@ namespace MottuChallenge.Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
+        private static IServiceCollection AddDbContext(this IServiceCollection services, ConnectionSettings connectionSettings)
         {
+            var connectionString = connectionSettings.MysqlConnection;
             services.AddDbContext<MottuChallengeContext>(options =>
             {
-                options.UseMySQL(configuration.GetConnectionString("MySqlConnection"));
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), mysqlOptions =>
+                { 
+                    mysqlOptions.EnableRetryOnFailure();
+                });
             });
 
             return services;
         }
 
-        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        private static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IYardRepository, YardRepository>();
             services.AddScoped<ISectorRepository, SectorRepository>();
@@ -30,9 +35,17 @@ namespace MottuChallenge.Infrastructure
             return services;
         }
 
-        public static IServiceCollection AddServices(this IServiceCollection services)
+        private static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddHttpClient<IAddressProvider, FindAddressByApiViaCep>();
+            return services;
+        }
+        
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, Settings settings)
+        {
+            services.AddDbContext(settings.ConnectionStrings);
+            services.AddRepositories();
+            services.AddServices();
             return services;
         }
 
