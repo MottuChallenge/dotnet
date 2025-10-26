@@ -119,12 +119,12 @@ VALUES
     (@spot46,@sec10,5,5,'FREE'),(@spot47,@sec10,6,5,'FREE'),(@spot48,@sec10,5,6,'FREE'),(@spot49,@sec10,6,6,'FREE'),(@spot50,@sec10,5.5,5.5,'FREE');
 
 -- =======================================
--- 6. Motorcycles (2 por setor, engineType COMBUSTION)
+-- 6. motorcycles (2 por setor, engineType COMBUSTION)
 -- =======================================
 SET @moto1 = UUID(); SET @moto2 = UUID(); SET @moto3 = UUID(); SET @moto4 = UUID(); SET @moto5 = UUID();
 SET @moto6 = UUID(); SET @moto7 = UUID(); SET @moto8 = UUID(); SET @moto9 = UUID(); SET @moto10 = UUID();
 
-INSERT INTO Motorcycles (id,model,engineType,plate,lastRevisionDate)
+INSERT INTO motorcycles (id,model,engineType,plate,lastRevisionDate)
 VALUES
     (@moto1,'Yamaha XJ6','COMBUSTION','ABC1234',NOW()),(@moto2,'Honda CB500','COMBUSTION','DEF5678',NOW()),
     (@moto3,'Suzuki GSX','COMBUSTION','GHI9012',NOW()),(@moto4,'KTM Duke','COMBUSTION','JKL3456',NOW()),
