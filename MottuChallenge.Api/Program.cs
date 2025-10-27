@@ -21,6 +21,9 @@ namespace MottuChallenge.Api
             builder.Services.AddHealthServices(configs.ConnectionStrings);
 
             var app = builder.Build();
+            
+            app.UseAuthentication(); // ✅ Primeiro autentica
+            app.UseAuthorization();  // ✅ Depois verifica permissão
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
