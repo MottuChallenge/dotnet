@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MottuChallenge.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using MottuChallenge.Infrastructure.Persistence;
 namespace MottuChallenge.Infrastructure.Migrations
 {
     [DbContext(typeof(MottuChallengeContext))]
-    partial class MottuChallengeContextModelSnapshot : ModelSnapshot
+    [Migration("20251027121654_create_table_employees")]
+    partial class create_table_employees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
