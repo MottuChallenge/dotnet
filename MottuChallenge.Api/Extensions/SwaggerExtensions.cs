@@ -23,6 +23,31 @@ public static class SwaggerExtensions
             });
             
             swagger.EnableAnnotations();
+            
+            swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Digite 'Bearer' [espaço] e o token JWT.\n\nExemplo: **Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9**"
+            });
+
+            swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
         });
         return services;
     }
