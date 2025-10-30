@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.UseCases.Employees;
 using MottuChallenge.Infrastructure.Security;
@@ -7,9 +8,10 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace MottuChallenge.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 [SwaggerTag("Authentication - Employee Registration and Login")]
+[ApiVersion(2.0)]
 public class AuthController : ControllerBase
 {
     private readonly CreateEmployeeUseCase _createEmployeeUseCase;

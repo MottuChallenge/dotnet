@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
 using MottuChallenge.Api.Hateoas;
@@ -11,10 +12,11 @@ using MottuChallenge.Domain.Exceptions;
 
 namespace MottuChallenge.Api.Controllers
 {
-    [Route("api/sectors")]
+    [Route("api/v{version:apiVersion}/sectors")]
     [ApiController]
     [Produces("application/json")]
     [SwaggerTag("Sectors - CRUD operations")]
+    [ApiVersion(1.0)]
     public class SectorController : ControllerBase
     {
         private readonly CreateSectorUseCase _createSectorUseCase;

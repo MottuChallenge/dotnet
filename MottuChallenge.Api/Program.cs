@@ -19,17 +19,25 @@ namespace MottuChallenge.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwagger(configs.Swagger);
             builder.Services.AddHealthServices(configs.ConnectionStrings);
+            builder.Services.AddVersioning();
 
             var app = builder.Build();
             
-            app.UseAuthentication(); // ✅ Primeiro autentica
-            app.UseAuthorization();  // ✅ Depois verifica permissão
+            app.UseAuthentication();
+            app.UseAuthorization();
+            
+            
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(ui =>
+                    {
+                        ui.SwaggerEndpoint("/swagger/v1/swagger.json",  "MottuGrid.API v1");
+                        ui.SwaggerEndpoint("/swagger/v2/swagger.json",  "MottuGrid.API v2");
+                    }
+                );
             }
 
             app.UseHttpsRedirection();

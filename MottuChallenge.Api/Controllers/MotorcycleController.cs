@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using MottuChallenge.Api.Hateoas;
 using MottuChallenge.Application.DTOs.Request;
@@ -10,9 +11,10 @@ using MottuChallenge.Domain.Exceptions;
 namespace MottuChallenge.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     [SwaggerTag("Motorcycles - CRUD operations")]
+    [ApiVersion(1.0)]
     public class MotorcyclesController : ControllerBase
     {
         private readonly CreateMotorcycleUseCase _createMotorcycleUseCase;

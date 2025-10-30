@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -18,10 +19,11 @@ using MottuChallenge.Domain.Exceptions;
 
 namespace MottuChallenge.Api.Controllers
 {
-    [Route("api/yards")]
+    [Route("api/v{version:apiVersion}/yards")]
     [ApiController]
     [Produces("application/json")]
     [SwaggerTag("Yards - CRUD operations")]
+    [ApiVersion(1.0)]
     public class YardController : ControllerBase
     {
         private readonly CreateYardUseCase _createYardUseCase;
