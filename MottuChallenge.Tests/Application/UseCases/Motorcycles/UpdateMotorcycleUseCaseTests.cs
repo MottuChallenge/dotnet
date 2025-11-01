@@ -9,7 +9,7 @@ namespace MottuChallenge.Test.Application.UseCases.Motorcycles;
 
 public class UpdateMotorcycleUseCaseTests
 {
-     private UpdateMotorcycleUseCase CreateUseCase(Mock<IMotorcycleRepository> motoRepo, Mock<ISectorRepository> sectorRepo)
+        private UpdateMotorcycleUseCase CreateUseCase(Mock<IMotorcycleRepository> motoRepo, Mock<ISectorRepository> sectorRepo)
             => new UpdateMotorcycleUseCase(motoRepo.Object, sectorRepo.Object);
 
         private Motorcycle CreateMotorcycle()
@@ -49,7 +49,7 @@ public class UpdateMotorcycleUseCaseTests
             var dto = new MotorcycleDto()
             {
                 Model = "new-model",
-                EngineType = 0, // map to expected DTO shape if EngineType is int in DTO
+                EngineType = 0,
                 Plate = "ABC-1234",
                 LastRevisionDate = DateTime.UtcNow
             };
@@ -72,7 +72,7 @@ public class UpdateMotorcycleUseCaseTests
 
             var oldSpot = CreateSpot();
             var moto = CreateMotorcycle();
-            moto.SetSpot(oldSpot); // assign spot to motorcycle
+            moto.SetSpot(oldSpot);
 
             var oldSector = CreateSectorInstance();
 
@@ -104,7 +104,7 @@ public class UpdateMotorcycleUseCaseTests
             var newSpot = CreateSpot();
             var newSector = CreateSectorInstance();
             var spots = new List<Spot> { newSpot };
-            newSector.AddSpots(spots); // ensure the new spot is part of the new sector
+            newSector.AddSpots(spots);
 
             var motoRepo = new Mock<IMotorcycleRepository>();
             var sectorRepo = new Mock<ISectorRepository>();
@@ -145,7 +145,7 @@ public class UpdateMotorcycleUseCaseTests
             motoRepo.Setup(r => r.GetByIdAsync(motoId)).ReturnsAsync((Motorcycle)null!);
 
             var targetSpot = CreateSpot();
-            var sectorWithoutSpot = CreateSectorInstance(); // treat as sector not containing the target spot
+            var sectorWithoutSpot = CreateSectorInstance();
 
             sectorRepo.Setup(r => r.GetSectorBySpotId(targetSpot.SpotId)).ReturnsAsync(sectorWithoutSpot);
 

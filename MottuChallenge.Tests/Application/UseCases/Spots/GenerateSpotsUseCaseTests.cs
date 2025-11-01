@@ -14,10 +14,10 @@ public class GenerateSpotsUseCaseTests
         var sector = new Sector();
         sector.AddPoints(new List<PolygonPoint>
         {
-            new PolygonPoint(0, minX, minY),
-            new PolygonPoint(1, maxX, minY),
-            new PolygonPoint(2, maxX, maxY),
-            new PolygonPoint(3, minX, maxY)
+            new(0, minX, minY),
+            new(1, maxX, minY),
+            new(2, maxX, maxY),
+            new(3, minX, maxY)
         });
         return sector;
         
@@ -27,8 +27,8 @@ public class GenerateSpotsUseCaseTests
     public void GenerateSpot_ReturnsExpectedCount_ForRectangle()
     {
         var sector = CreateRectangleSector(0, 0, 2, 2);
-        var width = 0.9;
-        var height = 0.9;
+        const double width = 0.9;
+        const double height = 0.9;
 
         var spots = _useCase.GenerateSpot(sector, width, height);
 
@@ -69,8 +69,8 @@ public class GenerateSpotsUseCaseTests
             if (p.Y > maxY) maxY = p.Y;
         }
 
-        var cols = (int)System.Math.Floor((maxX - minX) / width) + 1;
-        var rows = (int)System.Math.Floor((maxY - minY) / height) + 1;
+        var cols = (int)Math.Floor((maxX - minX) / width) + 1;
+        var rows = (int)Math.Floor((maxY - minY) / height) + 1;
         var expected = cols * rows;
 
         var spots = _useCase.GenerateSpot(sector, width, height);
