@@ -13,7 +13,7 @@ namespace MottuChallenge.Api
             var builder = WebApplication.CreateBuilder(args);
             var configs = builder.Configuration.Get<Settings>();
             
-            builder.Services.AddInfrastructure(configs);    
+            builder.Services.AddInfrastructure(configs);  
             builder.Services.AddUseCases();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -22,6 +22,8 @@ namespace MottuChallenge.Api
             builder.Services.AddVersioning();
 
             var app = builder.Build();
+
+            app.Services.ApplyMigrations();
             
             app.UseAuthentication();
             app.UseAuthorization();

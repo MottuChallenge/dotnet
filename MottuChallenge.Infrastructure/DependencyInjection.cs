@@ -63,6 +63,38 @@ namespace MottuChallenge.Infrastructure
             services.AddScoped<JwtTokenService>();
             return services;
         }
+
+        public static void ApplyMigrations(this IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var context = scope.ServiceProvider.GetService<MottuChallengeContext>();
+
+            if (context == null)
+            {
+                Console.WriteLine("⚠️ Nenhum contexto encontrado para aplicar migrations.");
+                return;
+            }
+
+            var retries = 0;
+            const int maxRetries = 10;
+
+            while (retries < maxRetries)
+            {
+                try
+                {
+                    Console.WriteLine("🔄 Tentando aplicar migrations...");
+                    context.Database.Migrate();
+                    Console.WriteLine("✅ Migrations aplicadas com sucesso!");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    retries++;
+                    Console.WriteLine($"⏳ Banco ainda não pronto (tentativa {retries}/{maxRetries}): {ex.Message}");
+                    Thread.Sleep(5000);
+                }
+            }
+        }
         
         
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, Settings settings)
