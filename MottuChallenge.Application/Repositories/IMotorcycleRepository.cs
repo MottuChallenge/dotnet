@@ -17,5 +17,7 @@ namespace MottuChallenge.Application.Repositories
         Task DeleteAsync(Motorcycle motorcycle);
 
         Task RemoveMotorcyclesByYardId(Guid yardId);
+
+        Task<List<Motorcycle>> GetMotorcyclesBySectorIdAsync(Guid sectorId);
     }
 }

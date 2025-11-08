@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using MottuChallenge.Api.Hateoas;
 using MottuChallenge.Application.DTOs.Request;
 using MottuChallenge.Application.DTOs.Response;
@@ -6,11 +9,14 @@ using MottuChallenge.Application.Pagination;
 using MottuChallenge.Application.UseCases.Motorcycles;
 using MottuChallenge.Domain.Exceptions;
 
-
-namespace MottuChallenge.API.Controllers
+namespace MottuChallenge.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Produces("application/json")]
+    [SwaggerTag("Motorcycles - CRUD operations")]
+    [ApiVersion(1.0)]
+    [Authorize]
     public class MotorcyclesController : ControllerBase
     {
         private readonly CreateMotorcycleUseCase _createMotorcycleUseCase;
@@ -37,24 +43,13 @@ namespace MottuChallenge.API.Controllers
         /// Cria uma nova motocicleta.
         /// </summary>
         /// <param name="dto">Objeto contendo os dados da motocicleta.</param>
-        /// <returns>Retorna a motocicleta criada com status 201.</returns>
-        /// <remarks>
-        /// Exemplo de request:
-        ///
-        ///     POST /api/motorcycles
-        ///     {
-        ///        "plate": "ABC1234",
-        ///        "model": "Yamaha XJ6",
-        ///        "engineType": 0, // 0: COMBUSTION, 1: ELETRIC,
-        ///        "lastRevisionDate": "2025-09-26T00:00:00",
-        ///        "spotId": "00000000-0000-0000-0000-000000000000" // opcional
-        ///     }
-        ///
-        /// </remarks>
-        /// <response code="201">Motocicleta criada com sucesso.</response>
-        /// <response code="400">Falha de validação.</response>
-        /// <response code="404">Recurso relacionado não encontrado.</response>
         [HttpPost]
+        [Consumes("application/json")]
+        [SwaggerOperation(Summary = "Create a new motorcycle", Description = "Creates a new motorcycle record")]
+        [ProducesResponseType(typeof(MotorcycleResponseDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SaveMotorcycle([FromBody] MotorcycleDto dto)
         {
             try
@@ -63,13 +58,18 @@ namespace MottuChallenge.API.Controllers
                     return BadRequest(ModelState);
 
                 var motorcycle = await _createMotorcycleUseCase.SaveMotorcycleAsync(dto);
-                var response = new
+                var motorcycleReponse = new MotorcycleResponseDto()
                 {
-                    data = motorcycle,
-                    links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, motorcycle.Id)
+                    Id = motorcycle.Id,
+                    Model = motorcycle.Model,
+                    EngineType = motorcycle.EngineType,
+                    Plate = motorcycle.Plate,
+                    LastRevisionDate = motorcycle.LastRevisionDate,
+                    SpotId = motorcycle.SpotId,
+                    Links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, motorcycle.Id)
                 };
 
-                return CreatedAtAction(nameof(GetMotorcycleById), new { id = motorcycle.Id }, response);
+                return CreatedAtAction(nameof(GetMotorcycleById), new { id = motorcycle.Id }, motorcycleReponse);
             }
             catch (KeyNotFoundException ex)
             {
@@ -84,36 +84,21 @@ namespace MottuChallenge.API.Controllers
         /// <summary>
         /// Lista todas as motocicletas com paginação.
         /// </summary>
-        /// <param name="page">Número da página (opcional, padrão: 1).</param>
-        /// <param name="pageSize">Quantidade de itens por página (opcional, padrão: 10).</param>
-        /// <param name="plate">Filtro opcional pela placa da moto.</param>
-        /// <returns>Lista paginada de motocicletas.</returns>
-        /// <response code="200">Retorna a lista de motocicletas.</response>
-        /// <response code="400">Falha de validação.</response>
         [HttpGet]
-        [ProducesResponseType(typeof(PaginatedResult<MotorcycleResponseDto>), 200)]
-        public async Task<IActionResult> GetAllMotorcyclesPaginated(int page = 1, int pageSize = 10, string? plate = null)
+        [SwaggerOperation(Summary = "Get paginated motorcycles", Description = "Returns a paginated list of motorcycles")]
+        [ProducesResponseType(typeof(PaginatedResult<MotorcycleResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllMotorcyclesPaginated(int page = 1, int pageSize = 10, string? plate = null, CancellationToken ct = default)
         {
             var pageRequest = new PageRequest { Page = page, PageSize = pageSize };
             var filter = new MotorcycleQuery { Plate = plate };
 
             try
             {
-                var paginatedResult = await _getAllMotorcyclesPageableUseCase.FindAllMotorcyclePageable(pageRequest, filter);
-                var response = new
-                {
-                    data = paginatedResult.Items,
-                    pagination = new
-                    {
-                        paginatedResult.Page,
-                        paginatedResult.PageSize,
-                        paginatedResult.TotalItems,
-                        paginatedResult.TotalPages
-                    },
-                    links = MotorcycleLinkBuilder.BuildCollectionLinks(Url, page, pageSize, plate)
-                };
+                var paginatedResult = await _getAllMotorcyclesPageableUseCase.FindAllMotorcyclePageable(pageRequest, filter, ct);
+                paginatedResult.Links = PaginatedLinkBuilder.BuildPaginatedLinks("GetAllMotorcyclesPaginated", "Motorcycles", Url, page, pageSize, paginatedResult.TotalPages);
 
-                return Ok(response);
+                return Ok(paginatedResult);
             }
             catch (ArgumentException ex)
             {
@@ -124,27 +109,13 @@ namespace MottuChallenge.API.Controllers
         /// <summary>
         /// Atualiza uma motocicleta existente pelo ID.
         /// </summary>
-        /// <param name="id">ID da motocicleta a ser atualizada.</param>
-        /// <param name="dto">Objeto contendo os novos dados da motocicleta.</param>
-        /// <returns>Status 204 se atualizado com sucesso.</returns>
-        /// <remarks>
-        /// Exemplo de request:
-        ///
-        ///     PUT /api/motorcycles/123e4567-e89b-12d3-a456-426614174000
-        ///     {
-        ///        plate": "ABC1234",
-        ///        "model": "Yamaha XJ6",
-        ///        "engineType": 0, // 0: COMBUSTION, 1: ELETRIC,
-        ///        "lastRevisionDate": "2025-09-26T00:00:00",
-        ///        "spotId": "00000000-0000-0000-0000-000000000000" // opcional
-        ///     }
-        ///
-        /// </remarks>
-        /// <response code="204">Motocicleta atualizada com sucesso.</response>
-        /// <response code="400">Falha de validação.</response>
-        /// <response code="404">Motocicleta não encontrada.</response>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] MotorcycleDto dto)
+        [Consumes("application/json")]
+        [SwaggerOperation(Summary = "Update motorcycle by id", Description = "Updates an existing motorcycle")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] MotorcycleDto dto, CancellationToken ct)
         {
             try
             {
@@ -164,18 +135,11 @@ namespace MottuChallenge.API.Controllers
         /// <summary>
         /// Remove uma motocicleta pelo ID.
         /// </summary>
-        /// <param name="id">ID da motocicleta a ser removida.</param>
-        /// <returns>Status 204 se removida com sucesso.</returns>
-        /// <remarks>
-        /// Exemplo de request:
-        ///
-        ///     DELETE /api/motorcycles/123e4567-e89b-12d3-a456-426614174000
-        ///
-        /// </remarks>
-        /// <response code="204">Motocicleta removida com sucesso.</response>
-        /// <response code="400">Falha de validação.</response>
-        /// <response code="404">Motocicleta não encontrada.</response>
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete motorcycle", Description = "Deletes a motorcycle by id")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteMotorcycle([FromRoute] Guid id)
         {
             try
@@ -196,29 +160,27 @@ namespace MottuChallenge.API.Controllers
         /// <summary>
         /// Consulta uma motocicleta pelo ID.
         /// </summary>
-        /// <param name="id">ID da motocicleta.</param>
-        /// <returns>Dados da motocicleta encontrada.</returns>
-        /// <remarks>
-        /// Exemplo de request:
-        ///
-        ///     GET /api/motorcycles/123e4567-e89b-12d3-a456-426614174000
-        ///
-        /// </remarks>
-        /// <response code="200">Motocicleta encontrada.</response>
-        /// <response code="404">Motocicleta não encontrada.</response>
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get motorcycle by id", Description = "Retrieves motorcycle details by id")]
+        [ProducesResponseType(typeof(MotorcycleResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetMotorcycleById([FromRoute] Guid id)
         {
             try
             {
                 var motorcycle = await _getMotorcycleByIdUseCase.FindMotorcycleById(id);
-                var response = new
+                var motorcycleReponse = new MotorcycleResponseDto()
                 {
-                    data = motorcycle,
-                    links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, id)
+                    Id = motorcycle.Id,
+                    Model = motorcycle.Model,
+                    EngineType = motorcycle.EngineType,
+                    Plate = motorcycle.Plate,
+                    LastRevisionDate = motorcycle.LastRevisionDate,
+                    SpotId = motorcycle.SpotId,
+                    Links = MotorcycleLinkBuilder.BuildMotorcycleLinks(Url, motorcycle.Id)
                 };
 
-                return Ok(response);
+                return Ok(motorcycleReponse);
             }
             catch (KeyNotFoundException ex)
             {
