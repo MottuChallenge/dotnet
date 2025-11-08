@@ -239,6 +239,93 @@ Content-Type: application/json
 
 DELETE /api/motorcycles/{id}
 
+---
+
+## 🔐 Autenticação - Employee (register / login)
+
+O sistema possui endpoints para registro e autenticação de funcionários (Employees). Eles são expostos no controller `AuthController` e estão versionados como v1.
+
+- Registrar (POST): `/api/v1/auth/register`
+  - Body: `CreateEmployeeRequest`
+  - Campos: `Name`, `Email`, `YardId` (Guid), `Password`
+
+Exemplo de body para registro:
+
+```json
+{
+  "Name": "João Silva",
+  "Email": "joao@example.com",
+  "YardId": "c56a4180-65aa-42ec-a945-5fd21dec0538",
+  "Password": "StrongPassword123"
+}
+```
+
+- Login (POST): `/api/v1/auth/login`
+  - Body: `LoginRequest` com `Email` e `Password`
+  - Resposta: string contendo o token JWT (200 OK) ou `401` em credenciais inválidas
+
+Exemplo de body para login:
+
+```json
+{
+  "Email": "joao@example.com",
+  "Password": "StrongPassword123"
+}
+```
+
+Uso do token JWT
+- O endpoint de login retorna um token JWT como texto. Para chamar endpoints protegidos (quando aplicável), adicione o header HTTP:
+
+```
+Authorization: Bearer <token_aqui>
+```
+
+- No Swagger UI você pode usar o botão "Authorize" (se habilitado) e colar `Bearer <token>` para testar rotas autenticadas.
+
+Notas:
+- O controller de autenticação está em `api/v1/auth` (versão 1). A API de ML (recomendação) usa versão 2: `/api/v2/ml/recommend-spot`.
+
+## 🧠 ML - Recomendação de vaga (recommend-spot)
+
+Adicionado um endpoint de recomendação que, dado um setor e uma data de revisão, sugere a melhor vaga (spot) e um score de confiança.
+
+- Rota (POST): `/api/v2/ml/recommend-spot`
+- Body: `RecommendSpotRequest` com os campos abaixo.
+
+Exemplo de body (use no Swagger ou via curl). O formato usa ISO-8601 para a data e `Guid` para o `SectorId`.
+
+```json
+{
+  "ReviewDate": "2025-11-08T10:00:00Z",
+  "SectorId": "123f846a-b2b2-11f0-a6f4-aa8c626e8990"
+}
+```
+
+Também funciona com keys em camelCase (o JSON binder do .NET lida com ambas):
+
+```json
+{
+  "reviewDate": "2025-11-08T10:00:00Z",
+  "sectorId": "123f846a-b2b2-11f0-a6f4-aa8c626e8990"
+}
+```
+
+Exemplo de resposta (200 OK):
+
+```json
+{
+  "spotId": "c0a80123-4567-890a-bcde-f1234567890a",
+  "score": 0.85
+}
+```
+
+Notas rápidas:
+- O endpoint está versionado como v2 (veja a rota /api/v2/).
+- Se não houver recomendação disponível será retornado `404` com a mensagem "No recommendation available".
+- Para testar localmente abra o Swagger (normalmente em `http://localhost:5006/swagger/index.html`) e use a rota `POST /api/v2/ml/recommend-spot`.
+
+Se quiser que eu acrescente exemplos curl prontos ou mais opções de datas (ex.: apenas data sem hora, datas futuras/passadas), eu preparo os comandos tbm.
+
 
 
 
