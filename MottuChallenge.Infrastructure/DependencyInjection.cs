@@ -39,9 +39,16 @@ namespace MottuChallenge.Infrastructure
             return services;
         }
 
-        private static IServiceCollection AddServices(this IServiceCollection services)
+        private static IServiceCollection AddServices(this IServiceCollection services, Settings settings)
         {
             services.AddHttpClient<IAddressProvider, FindAddressByApiViaCep>();
+
+            // Register Oracle DB procedures service when Oracle connection string is present
+            if (!string.IsNullOrWhiteSpace(settings.ConnectionStrings?.OracleConnection))
+            {
+                services.AddScoped<IDbProceduresService>(sp => new OracleDbProceduresService(settings.ConnectionStrings.OracleConnection));
+            }
+
             return services;
         }
 
@@ -70,7 +77,7 @@ namespace MottuChallenge.Infrastructure
             services.AddDbContext(settings.ConnectionStrings);
             services.AddSecurity(settings.Jwt);
             services.AddRepositories();
-            services.AddServices();
+            services.AddServices(settings);
             return services;
         }
 
