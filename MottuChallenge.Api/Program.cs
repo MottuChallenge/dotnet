@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using MottuChallenge.Api.Extensions;
+using MottuChallenge.Api.Services;
 using MottuChallenge.Application;
 using MottuChallenge.Application.Configurations;
 using MottuChallenge.Infrastructure;
@@ -20,6 +21,7 @@ namespace MottuChallenge.Api
             builder.Services.AddSwagger(configs.Swagger);
             builder.Services.AddHealthServices(configs.ConnectionStrings);
             builder.Services.AddVersioning();
+            builder.Services.AddScoped<ISpotRecommendationService, SpotRecommendationService>();
 
             var app = builder.Build();
             

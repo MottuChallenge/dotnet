@@ -91,5 +91,14 @@ namespace MottuChallenge.Infrastructure.Repositories
             }
         }
 
+        public async Task<List<Motorcycle>> GetMotorcyclesBySectorIdAsync(Guid sectorId)
+        {
+            // Include Spot navigation so we have coordinates
+            return await _context.Motorcycles
+                .Include(m => m.Spot)
+                .Where(m => m.Spot != null && m.Spot.SectorId == sectorId)
+                .ToListAsync();
+        }
+
     }
 }
