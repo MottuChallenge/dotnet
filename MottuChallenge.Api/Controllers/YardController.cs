@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -24,6 +25,7 @@ namespace MottuChallenge.Api.Controllers
     [Produces("application/json")]
     [SwaggerTag("Yards - CRUD operations")]
     [ApiVersion(1.0)]
+    [Authorize]
     public class YardController : ControllerBase
     {
         private readonly CreateYardUseCase _createYardUseCase;
@@ -112,6 +114,7 @@ namespace MottuChallenge.Api.Controllers
         [SwaggerOperation(Summary = "Get all yards", Description = "Returns a list of all yards")]
         [ProducesResponseType(typeof(List<YardResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllYardsAsync()
         {
             try

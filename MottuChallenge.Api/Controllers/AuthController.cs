@@ -11,7 +11,7 @@ namespace MottuChallenge.Api.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 [SwaggerTag("Authentication - Employee Registration and Login")]
-[ApiVersion(2.0)]
+[ApiVersion(1.0)]
 public class AuthController : ControllerBase
 {
     private readonly CreateEmployeeUseCase _createEmployeeUseCase;

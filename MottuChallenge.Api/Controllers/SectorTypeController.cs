@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
@@ -16,6 +17,7 @@ namespace MottuChallenge.Api.Controllers
     [Produces("application/json")]
     [SwaggerTag("Sector Types - CRUD operations")]
     [ApiVersion(1.0)]
+    [Authorize]
     public class SectorTypeController : ControllerBase
     {
         private readonly CreateSectorTypeUseCase _createSectorTypeUseCase;

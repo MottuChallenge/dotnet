@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using MottuChallenge.Api.Hateoas;
@@ -15,6 +16,7 @@ namespace MottuChallenge.Api.Controllers
     [Produces("application/json")]
     [SwaggerTag("Motorcycles - CRUD operations")]
     [ApiVersion(1.0)]
+    [Authorize]
     public class MotorcyclesController : ControllerBase
     {
         private readonly CreateMotorcycleUseCase _createMotorcycleUseCase;
